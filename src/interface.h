@@ -1,9 +1,6 @@
 #include "main.h"
 #include "radio.h"
 extern radio_data1 rd;
-//String stringPress = String(rd.press, 0);
-//String stringext_temp = String(rd.ext_temp, 2);
-//String stringint_temp = String(rd.int_temp, 2);
 
 String lng() {
   // Вариант реализации многоязычности
@@ -33,7 +30,7 @@ void myLoopRun() {
   crm.webUpdate("rssi", String((a[0] + a[1] + a[2]) / 3));
   crm.webUpdate("rssiraw", String(a[i]));
   i++;
-  crm.webUpdate("press", String(rd.press, 0));
+  crm.webUpdate("press",    String(rd.press, 0));
   crm.webUpdate("ext_temp", String(rd.ext_temp, 2));
   crm.webUpdate("int_temp", String(rd.int_temp, 2));
 }
@@ -149,8 +146,9 @@ void interface() {
   // Вывод значений в виде таблицы
   // crm.output({[Тип], ["ID"], ["Заголовок"], ["Значение при загрузке страницы"], ["цвет в HEX формате"]});
   crm.output({OUTPUT_TABL, "t2", "Давление", "press", "0f0"});
-  crm.output({OUTPUT_TABL, "t3", "Температура внутри", "int_temp"});
-  crm.output({OUTPUT_TABL, "t4", "Температура снаружи", "ext_temp", "f0f"});
+ 
+  crm.output({OUTPUT_TABL, "t3", "Температура внутри", String(rd.int_temp, 2)});
+  crm.output({OUTPUT_TABL, "t4", "Температура снаружи", String(rd.ext_temp, 2), "f0f"});
   crm.output({OUTPUT_HR, "1px", "-3px 10% 0"});
 
   // График

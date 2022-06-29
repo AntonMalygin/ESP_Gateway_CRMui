@@ -32,9 +32,9 @@ void setup() {
   // crm.begin("[*Название проекта]", [*Ф-я интерфейса], [Ф-я обновления переменных], [Ф-я API], [Скорость серийного порта, доп. отладка]);
   //crm.begin("Project-28", interface, update);
   //crm.begin("Project-28", interface, NULL, NULL, 115200);
-  crm.begin("ESP-Gateway", interface, update, api, 115200);
-  
-  Serial.begin(BAUD_RATE); //Выставляем скорость для общения с часами 
+  crm.begin("ESP-Gateway", interface, update,NULL ,57600);
+   
+  //Serial.begin(BAUD_RATE); //Выставляем скорость для общения с часами 
 
   // Авторизация в веб интерфейсе
   // Параметры со * обязательны.
