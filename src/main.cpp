@@ -13,6 +13,9 @@ Ticker myLoop;  // Ticker
 // Переменные в примере
 bool st3, st4, st5;
 
+#define TXD_PIN (GPIO_NUM_13)
+#define RXD_PIN (GPIO_NUM_12)
+
 #include "interface.h"
 #include "main.h"
 #include "radio.h"
@@ -32,10 +35,11 @@ void setup() {
   // crm.begin("[*Название проекта]", [*Ф-я интерфейса], [Ф-я обновления переменных], [Ф-я API], [Скорость серийного порта, доп. отладка]);
   //crm.begin("Project-28", interface, update);
   //crm.begin("Project-28", interface, NULL, NULL, 115200);
-  crm.begin("ESP-Gateway", interface, update,NULL ,57600);
+  crm.begin("ESP-Gateway", interface, update,NULL);
    
-  //Serial.begin(BAUD_RATE); //Выставляем скорость для общения с часами 
-
+  Serial1.begin(BAUD_RATE); //Выставляем скорость для общения с часами 
+  Serial1.setPins(RXD_PIN, TXD_PIN);
+  Serial1.flush();
   // Авторизация в веб интерфейсе
   // Параметры со * обязательны.
   // crm.setWebAuth("[*Имя пользователя]", "[Пароль]");
@@ -65,6 +69,8 @@ void loop() {
   // Обслуживание системных функций библиотеки
   crm.run();
 
+radio_pool(); // Получение данных от часов
+
   // Проверка состояния нажатия совтовых кнопок. Проверка не обязательна.
   if (crm.btnSwStatus()) {
     // Проверка конкретных кнопок на нажатие
@@ -79,7 +85,7 @@ void loop() {
   // crm.btnCallback("[пин подключения кнопки]", [Функция для выполнения], [уровень при нажатии]);
   crm.btnCallback(4, hw_butt, LOW);      // Check pin33 HW button
 
-  radio_pool();
+ 
 
 }
 

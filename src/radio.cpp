@@ -61,9 +61,9 @@ void radio_pool(void)
 	if((millis() - tst) > 20)ukz = 0;
 	}
  
-  while(Serial.available()>0)
+  while(Serial1.available()>0)
   {
-    rx_val[ukz] = Serial.read();
+    rx_val[ukz] = Serial1.read();
     tst = millis();
 
         if((ukz == 0)&&(rx_val[0]== 0xA5)) //первый байт заголовка

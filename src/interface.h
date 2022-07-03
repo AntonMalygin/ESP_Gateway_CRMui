@@ -24,6 +24,8 @@ void myLoopRun() {
   if (i > 2) i = 0;
   a[i] = WiFi.RSSI();
 
+
+
   // Обновление значений элементов веб интерфейса
   // crm.webUpdate("[ID элемента]", "[Значение]");
   // Интервал отправки 1 раз в сек.
@@ -31,15 +33,27 @@ void myLoopRun() {
   crm.webUpdate("rssiraw", String(a[i]));
   i++;
   crm.webUpdate("press",    String(rd.press, 0));
-  crm.webUpdate("ext_temp", String(rd.ext_temp, 2));
-  crm.webUpdate("int_temp", String(rd.int_temp, 2));
+  crm.webUpdate("ext_temp", String(rd.ext_temp, 0));
+  crm.webUpdate("int_temp", String(rd.int_temp, 0));
+
+  crm.webUpdate("seconds",String(rd.dt.seconds));
+  crm.webUpdate("minutes",String(rd.dt.minutes));
+  crm.webUpdate("hours",String(rd.dt.hours,HEX));
+  crm.webUpdate("day",String(rd.dt.day));
+  crm.webUpdate("date",String(rd.dt.date));
+  crm.webUpdate("month",String(rd.dt.month));
+  crm.webUpdate("year",String(rd.dt.year));
+  crm.webUpdate("date1307",String(rd.dt.year + ':' + rd.dt.month + ':' + rd.dt.day));
+  //crm.webUpdate("time1307",String(rd.dt.hours + ':' + rd.dt.minutes + ':' + rd.dt.seconds));
+  crm.webUpdate("time1307",String(rd.dt.seconds));
+  crm.webUpdate("timeformat",String(rd.dt_format));
 }
 
 
 void update() {
   // Метод вызывается при каждом изменении значения элементов через веб интерфейса
-  Serial.println("Method update() run");
-  Serial.println("Language: " + lng());
+  //Serial.println("Method update() run");
+  //Serial.println("Language: " + lng());
 
   // Получить(Записать) значение переменной из(в) конфига
   // crm.var("ID")
@@ -67,8 +81,8 @@ void api(String p) {
   // Ответ на запрос, тип JSON
   // crm.apiResponse("[ID]", "[Значение]");
 
-  Serial.print("API: ");
-  Serial.println(p);
+  //Serial.print("API: ");
+  //Serial.println(p);
 
   DynamicJsonDocument doc(200);
   deserializeJson(doc, p);
@@ -89,35 +103,35 @@ void api(String p) {
   //Запрос http://IP/api?print=[any_text]
   const char* prt = doc["print"];
   if (prt != NULL) {
-    Serial.println(prt);
+    //Serial.println(prt);
   }
 }
 
 
 //функции кнопок
 void hw_butt() {
-  Serial.println("HW BUTTON PRESS!");
+  //Serial.println("HW BUTTON PRESS!");
 }
 
 void tablt2() {
-  Serial.println("Button STOP press.");
+  //Serial.println("Button STOP press.");
   crm.webUpdate("t2", String(millis()));
 }
 
 void card_sw3() {
-  Serial.println("Card 3 Button press.");
+  //Serial.println("Card 3 Button press.");
   st3 = !st3;
   crm.webUpdate("card3", st3 ? "Open" : "Close");
 }
 
 void card_sw4() {
-  Serial.println("Card 4 Button press.");
+  //Serial.println("Card 4 Button press.");
   st4 = !st4;
   crm.webUpdate("card4", st4 ? "Open" : "Close");
 }
 
 void card_sw5() {
-  Serial.println("Card 5 Button press.");
+  //Serial.println("Card 5 Button press.");
   st5 = !st5;
   crm.webUpdate("card5", st5 ? "Open" : "Close");
 }
@@ -145,10 +159,13 @@ void interface() {
 
   // Вывод значений в виде таблицы
   // crm.output({[Тип], ["ID"], ["Заголовок"], ["Значение при загрузке страницы"], ["цвет в HEX формате"]});
-  crm.output({OUTPUT_TABL, "t2", "Давление", "press", "0f0"});
- 
-  crm.output({OUTPUT_TABL, "t3", "Температура внутри", String(rd.int_temp, 2)});
-  crm.output({OUTPUT_TABL, "t4", "Температура снаружи", String(rd.ext_temp, 2), "f0f"});
+  crm.output({OUTPUT_TABL, "press", "Давление", "press", "0f0"});
+  crm.output({OUTPUT_TABL, "int_temp", "Температура внутри", "int_temp"});
+  crm.output({OUTPUT_TABL, "ext_temp", "Температура снаружи", "ext_temp", "f0f"});
+  crm.output({OUTPUT_TABL, "hours", "Часы", "01", "f0f"});
+  crm.output({OUTPUT_TABL, "date1307", "date1307", "2020.07.04", "f0f"});
+  crm.output({OUTPUT_TABL, "time1307", "time1307", "0.09.04", "f0f"});
+  crm.output({OUTPUT_TABL, "timeformat", "timeFormat", "10/16", "f0f"});
   crm.output({OUTPUT_HR, "1px", "-3px 10% 0"});
 
   // График

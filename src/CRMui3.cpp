@@ -40,7 +40,7 @@ void CRMui3::begin(const String &app_name, void (*uiFunction)(), void (*updateFu
     Serial.begin(baud);
     Serial.setTimeout(100);
     Serial.flush();
-    _debug = true;
+    _debug = false;
   }
   SPLN(String(F("\nCRMui3 ver:")) + CRM_VER);
   if (uiFunction == NULL) {
