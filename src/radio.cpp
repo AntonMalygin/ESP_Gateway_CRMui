@@ -94,13 +94,14 @@ void radio_pool(void)
             radio_frame *mt = (radio_frame *)rx_val;
             uint8_t in_crc = mt->crc;
             mt->crc = extra_tab[mt->msgid];
-            uint8_t crc = crc8(rx_val, ukz);              
+            uint8_t crc = crc8(rx_val, ukz); 
+             ukz = 0;             
             if(crc == in_crc) 
             {
 rx_radio_filter(mt);
               
             }
-               ukz = 0;
+              
                return;
            }
 
