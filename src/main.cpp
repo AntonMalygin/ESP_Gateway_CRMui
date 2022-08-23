@@ -96,7 +96,7 @@ void rx_radio_filter(radio_frame * msg)
 if (msg->msgid == 1)
 {
   uint16_t data_tmp[50];
-  data_tmp=lwip_htons((uint16_t)msg);
+  //data_tmp=lwip_htons((uint16_t)msg);
   radio_data1 *rd1 =( radio_data1 *)msg->data;
   
   memcpy(&rd,rd1,sizeof(radio_data1));
