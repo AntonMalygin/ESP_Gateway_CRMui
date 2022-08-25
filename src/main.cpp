@@ -21,6 +21,13 @@ bool st3, st4, st5;
 #include "main.h"
 #include "radio.h"
 
+       union
+        {
+         uint8_t  a[4];
+         uint16_t b[2];
+         uint32_t c;
+         float    d;
+        }tmp;
 
 //radio_data1 rd; // Структура данных для MSG ID = 1 . Простые данные от часов
 radio_data1 rd;
@@ -37,7 +44,8 @@ void setup() {
   //crm.begin("Project-28", interface, update);
   //crm.begin("Project-28", interface, NULL, NULL, 115200);
   crm.begin("ESP-Gateway", interface, update,NULL);
-   
+   Serial.begin(115200);
+
   Serial1.begin(BAUD_RATE); //Выставляем скорость для общения с часами 
   Serial1.setPins(RXD_PIN, TXD_PIN);
   Serial1.flush();
@@ -92,21 +100,39 @@ radio_pool(); // Получение данных от часов
 
 void rx_radio_filter(radio_frame * msg)
 {
-// uint8_t *bf = (uint8_t *)msg;
+
+/*        union
+        {
+         uint8_t  a[4];
+         uint16_t b[2];
+         uint32_t c;
+         float    d;
+        }tmp;
+ */
 if (msg->msgid == 1)
 {
-  uint16_t data_tmp[50];
-  //data_tmp=lwip_htons((uint16_t)msg);
-  radio_data1 *rd1 =( radio_data1 *)msg->data;
   
+  radio_data1 *rd1 =( radio_data1 *)msg->data;
+
+/* tmp.d=rd1->ext_temp;
+tmp.c=lwip_ntohl(tmp.c);
+rd1->ext_temp=tmp.d;
+
+tmp.d=rd1->int_temp;
+tmp.c=lwip_ntohl(tmp.c);
+rd1->int_temp=tmp.d;
+
+tmp.d=rd1->press;
+tmp.c=lwip_ntohl(tmp.c);
+rd1->press=tmp.d; */
+
   memcpy(&rd,rd1,sizeof(radio_data1));
-  //rd=msg->data;
- //rd=(radio_data1*)msg->data;
- //rd->ds_error
+
+
+
 }
 // Отправляем в HC12, то что пришло по UART от часов. 
 //Serial2.write(bf,msg->len+7);
 //Serial2.write((uint8_t *)msg,msg->len+7);
 }
-
 

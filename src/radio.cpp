@@ -1,5 +1,8 @@
 #include "Arduino.h"
 #include "radio.h"
+#include "lwip/opt.h"
+#include "lwip/def.h"
+#include <string.h>
 
 
 #define _MSG_STX_ 0xa544 /*слово начала пакета*/
@@ -56,6 +59,9 @@ void radio_pool(void)
 {
   static uint8_t ukz;
   static uint32_t tst;
+
+
+
   if(ukz > 0)
 	{
 	if((millis() - tst) > 20)ukz = 0;
@@ -98,6 +104,8 @@ void radio_pool(void)
              ukz = 0;             
             if(crc == in_crc) 
             {
+
+
 rx_radio_filter(mt);
               
             }
