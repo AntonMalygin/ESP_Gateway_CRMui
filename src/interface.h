@@ -35,17 +35,29 @@ void myLoopRun() {
   crm.webUpdate("rssiraw", String(a[i]));
   i++;
  
-  crm.webUpdate("press",    String(rd.press, 4));
-  crm.webUpdate("ext_temp", String(rd.ext_temp, 4));
-  crm.webUpdate("int_temp", String(rd.int_temp, 4));
+  
 
-Serial.print("Press");
-Serial.println(rd.press, 0000);
-Serial.print("ext_temp");
-Serial.println(rd.ext_temp, 0000);
-Serial.print("int_temp");
-Serial.println(rd.int_temp, 0000);
+  if(rd.ds_error==0)
+  {
+    crm.webUpdate("ext_temp", String(rd.ext_temp, 2));
+  }
+  else
+   {
+    crm.webUpdate("ext_temp", String("Ошибка связи с датчиком Код: ")+ String(rd.ds_error,HEX));
+    }
 
+if (rd.bm_error==0)
+{
+  crm.webUpdate("press",    String(rd.press));
+  crm.webUpdate("int_temp", String(rd.int_temp, 2));
+}
+else
+{
+  crm.webUpdate("press",    String("Ошибка связи с датчиком Код: ")+ String(rd.bm_error,HEX));
+  crm.webUpdate("int_temp", String("Ошибка связи с датчиком Код: ")+ String(rd.bm_error,HEX));
+}
+
+  
   crm.webUpdate("seconds",String(rd.dt.seconds,HEX));
   crm.webUpdate("minutes",String(rd.dt.minutes,HEX));
   crm.webUpdate("hours",String(rd.dt.hours,HEX));
@@ -57,6 +69,11 @@ Serial.println(rd.int_temp, 0000);
   crm.webUpdate("time1307",String(String(rd.dt.hours,HEX) + ":" + String(rd.dt.minutes,HEX) + ":" + String(rd.dt.seconds,HEX)));
   crm.webUpdate("time1307_sec",String(rd.dt.seconds,HEX));
   crm.webUpdate("timeformat",String(rd.dt_format));
+  crm.webUpdate("dt_error",String(rd.dt_error,HEX));
+  crm.webUpdate("bm_error",String(rd.bm_error,HEX));
+  crm.webUpdate("ds_error",String(rd.ds_error,HEX));
+
+
 }
 
 
@@ -181,11 +198,17 @@ void interface() {
   crm.output({OUTPUT_TABL, "date1307", "Год + Месяц + день", "2020.07.04", "f0f"});
   crm.output({OUTPUT_TABL, "time1307", "Час + минуты + секунды", "2020.07.04", "f0f"});
   crm.output({OUTPUT_TABL, "timeformat", "timeFormat", "10/16", "f0f"});
+  crm.output({OUTPUT_TABL, "dt_error", "dt_error", "-", "f0f"});
+  crm.output({OUTPUT_TABL, "bm_error", "bm_error", "-", "f0f"});
+  crm.output({OUTPUT_TABL, "ds_error", "ds_error", "-", "f0f"});
+
   crm.output({OUTPUT_HR, "1px", "-3px 10% 0"});
 
   // График
   //crm.chart({[Тип], ["ID"], ["Заголовок"], ["[Массив заголовков]"], ["[Данные]"], ["цвет в HEX формате"], ["высота графика"]});
-  crm.chart({CHART_L, "rssi", "WiFi RSSI", "[1,2,3,4,5,6]",  "[1,5,3,2,6,3]", "#00dd00", "250"});
+  crm.chart({CHART_L, "int_temp", "Температура внутри", "[1,2,3,4,5,6]",  "[1,5,3,2,6,3]", "#00dd00", "150"});
+  crm.chart({CHART_L, "ext_temp", "Температура снаружи", "[1,2,3,4,5,6]",  "[1,5,3,2,6,3]", "#00dd00", "100"});
+  crm.chart({CHART_L, "press", "Давление", "[1,2,3,4,5,6]",  "[1,5,3,2,6,3]", "#00dd00", "100"});
 
   // Плитки / Карточки
   // Переключатель

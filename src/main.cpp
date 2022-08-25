@@ -17,6 +17,8 @@ bool st3, st4, st5;
 #define RXD_PIN (GPIO_NUM_27)
 
 
+#define convert_Network_to_Host(a) ( (((a)>>16)&0xffff) | (((a)<<16)&0xffff0000))
+
 #include "interface.h"
 #include "main.h"
 #include "radio.h"
@@ -101,33 +103,24 @@ radio_pool(); // Получение данных от часов
 void rx_radio_filter(radio_frame * msg)
 {
 
-/*        union
-        {
-         uint8_t  a[4];
-         uint16_t b[2];
-         uint32_t c;
-         float    d;
-        }tmp;
- */
+
 if (msg->msgid == 1)
 {
   
-  radio_data1 *rd1 =( radio_data1 *)msg->data;
-
-/* tmp.d=rd1->ext_temp;
-tmp.c=lwip_ntohl(tmp.c);
-rd1->ext_temp=tmp.d;
-
+radio_data1 *rd1 =( radio_data1 *)msg->data;
 tmp.d=rd1->int_temp;
-tmp.c=lwip_ntohl(tmp.c);
+tmp.c=convert_Network_to_Host(tmp.c);
 rd1->int_temp=tmp.d;
 
+tmp.d=rd1->ext_temp;
+tmp.c=convert_Network_to_Host(tmp.c);
+rd1->ext_temp=tmp.d;
+
 tmp.d=rd1->press;
-tmp.c=lwip_ntohl(tmp.c);
-rd1->press=tmp.d; */
+tmp.c=convert_Network_to_Host(tmp.c);
+rd1->press=tmp.d;
 
   memcpy(&rd,rd1,sizeof(radio_data1));
-
 
 
 }
