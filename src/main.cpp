@@ -1,10 +1,12 @@
 #include <Arduino.h>
-
+#include "FS.h"
+#include <LITTLEFS.h>
 
 //Example use CRMui3  /  Пример использования CRMui3
 
 #include "CRMui3.h"
 #include <Ticker.h> // Входит в состав ядра
+#include "BluetoothSerial.h" 
 
 // Объявление объектов
 CRMui3 crm;     // CRMui
@@ -25,6 +27,17 @@ bool st3, st4, st5, setTime;
 radio_data1 rd;
 void rx_radio_filter(radio_frame * msg);
 
+#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
+#error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
+#endif
+
+#if !defined(CONFIG_BT_SPP_ENABLED)
+#error Serial Bluetooth not available or not enabled. It is only available for the ESP32 chip.
+#endif
+
+BluetoothSerial SerialBT; //Object for Bluetooth
+
+
 void setup() {
   pinMode(2, OUTPUT);
   digitalWrite(2, LOW);
@@ -36,11 +49,13 @@ void setup() {
   //crm.begin("Project-28", interface, update);
   //crm.begin("Project-28", interface, NULL, NULL, 115200);
   crm.begin("ESP-Gateway", interface, update,NULL);
-   Serial.begin(115200);
+  Serial.begin(115200);
 
   Serial1.begin(BAUD_RATE); //Выставляем скорость для общения с часами 
   Serial1.setPins(RXD_PIN, TXD_PIN);
   Serial1.flush();
+  SerialBT.begin("ESP_GATEWAY"); //Bluetooth device name
+  //ESP_BT.begin("ESP_GATEWAY");
   // Авторизация в веб интерфейсе
   // Параметры со * обязательны.
   // crm.setWebAuth("[*Имя пользователя]", "[Пароль]");
