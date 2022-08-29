@@ -105,7 +105,6 @@ void radio_pool(void)
             if(crc == in_crc) 
             {
 
-
 rx_radio_filter(mt);
               
             }

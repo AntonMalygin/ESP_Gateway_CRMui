@@ -11,25 +11,15 @@ CRMui3 crm;     // CRMui
 Ticker myLoop;  // Ticker
 
 // Переменные в примере
-bool st3, st4, st5;
+bool st3, st4, st5, setTime;
 
 #define TXD_PIN (GPIO_NUM_26)
 #define RXD_PIN (GPIO_NUM_27)
 
-
-#define convert_Network_to_Host(a) ( (((a)>>16)&0xffff) | (((a)<<16)&0xffff0000))
-
 #include "interface.h"
 #include "main.h"
 #include "radio.h"
-
-       union
-        {
-         uint8_t  a[4];
-         uint16_t b[2];
-         uint32_t c;
-         float    d;
-        }tmp;
+      
 
 //radio_data1 rd; // Структура данных для MSG ID = 1 . Простые данные от часов
 radio_data1 rd;
@@ -91,6 +81,7 @@ radio_pool(); // Получение данных от часов
     crm.btnCallback("card4", card_sw4);   // Check "card4" SW button
     crm.btnCallback("card5", card_sw5);   // Check "card5" SW button
     crm.btnCallback("b3", tablt2);        // Check "b3" SW button
+    crm.btnCallback("SetTime", Set_Time); // Проверка кнопки установки времени
   }
   // Проверка аппаратных кнопок на нажатие
   // crm.btnCallback("[пин подключения кнопки]", [Функция для выполнения], [уровень при нажатии]);
@@ -108,19 +99,8 @@ if (msg->msgid == 1)
 {
   
 radio_data1 *rd1 =( radio_data1 *)msg->data;
-tmp.d=rd1->int_temp;
-tmp.c=convert_Network_to_Host(tmp.c);
-rd1->int_temp=tmp.d;
 
-tmp.d=rd1->ext_temp;
-tmp.c=convert_Network_to_Host(tmp.c);
-rd1->ext_temp=tmp.d;
-
-tmp.d=rd1->press;
-tmp.c=convert_Network_to_Host(tmp.c);
-rd1->press=tmp.d;
-
-  memcpy(&rd,rd1,sizeof(radio_data1));
+ memcpy(&rd,rd1,sizeof(radio_data1));
 
 
 }

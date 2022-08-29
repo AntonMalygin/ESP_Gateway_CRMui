@@ -43,7 +43,7 @@ void myLoopRun() {
   }
   else
    {
-    crm.webUpdate("ext_temp", String("Ошибка связи с датчиком Код: ")+ String(rd.ds_error,HEX));
+    crm.webUpdate("ext_temp", String("Ошибка связи с датчиком Код: ")+ String(rd.ds_error));
     }
 
 if (rd.bm_error==0)
@@ -145,6 +145,12 @@ void tablt2() {
   crm.webUpdate("t2", String(millis()));
 }
 
+void Set_Time() {
+  //Serial.println("Card 3 Button press.");
+  setTime = !setTime;
+  crm.webUpdate("SetTime", setTime ? "Установить" : "Установлено");
+}
+
 void card_sw3() {
   //Serial.println("Card 3 Button press.");
   st3 = !st3;
@@ -189,18 +195,9 @@ void interface() {
   crm.output({OUTPUT_TABL, "press", "Давление", "press", "0f0"});
   crm.output({OUTPUT_TABL, "int_temp", "Температура внутри", "int_temp"});
   crm.output({OUTPUT_TABL, "ext_temp", "Температура снаружи", "ext_temp", "f0f"});
-  crm.output({OUTPUT_TABL, "year", "Год", "01", "f0f"});
-  crm.output({OUTPUT_TABL, "month", "Месяц", "01", "f0f"});
-  crm.output({OUTPUT_TABL, "day", "День", "01", "f0f"});
-  crm.output({OUTPUT_TABL, "hours", "Часов", "01", "f0f"});
-  crm.output({OUTPUT_TABL, "minutes", "Минут", "01", "f0f"});
-  crm.output({OUTPUT_TABL, "seconds", "секунд", "01", "f0f"});
-  crm.output({OUTPUT_TABL, "date1307", "Год + Месяц + день", "2020.07.04", "f0f"});
+  crm.output({OUTPUT_TABL, "date1307", "День + Месяц + Год", "2020.07.04", "f0f"});
   crm.output({OUTPUT_TABL, "time1307", "Час + минуты + секунды", "2020.07.04", "f0f"});
-  crm.output({OUTPUT_TABL, "timeformat", "timeFormat", "10/16", "f0f"});
-  crm.output({OUTPUT_TABL, "dt_error", "dt_error", "-", "f0f"});
-  crm.output({OUTPUT_TABL, "bm_error", "bm_error", "-", "f0f"});
-  crm.output({OUTPUT_TABL, "ds_error", "ds_error", "-", "f0f"});
+    
 
   crm.output({OUTPUT_HR, "1px", "-3px 10% 0"});
 
@@ -226,11 +223,11 @@ void interface() {
 
   // Для отображения значков в текстовых полях заключаем их в <z></z>
   // Пример <z>&#xf1c9;</z>
-  String txt = F("<z>&#xf1c9;</z> In computer science, an array data structure, or simply an array, is a data structure consisting of a collection of elements (values or variables), each identified by at least one array index or key. An array is stored such that the position of each element can be computed from its index tuple by a mathematical formula.[1][2][3] The simplest type of data structure is a linear array, also called one-dimensional array.");
+ // String txt = F("<z>&#xf1c9;</z> In computer science, an array data structure, or simply an array, is a data structure consisting of a collection of elements (values or variables), each identified by at least one array index or key. An array is stored such that the position of each element can be computed from its index tuple by a mathematical formula.[1][2][3] The simplest type of data structure is a linear array, also called one-dimensional array.");
 
   // Текстовое поле справка
   //crm.output({[Тип], ["ID"], "", ["ТЕКСТ"], ["цвет в HEX формате"]});
-  crm.output({OUTPUT_TEXT, "t1", "", txt, "#ff5"});
+  //crm.output({OUTPUT_TEXT, "t1", "", txt, "#ff5"});
 
   // Кнопки
   // crm.input({[Тип], ["ID"], ["Заголовок / значок"], ["Внутренние отступы, смотри: padding html"], ["r - вряд"], ["Размер"]});
@@ -249,16 +246,18 @@ void interface() {
   if (crm.var("select1").toInt() > 0) {
     // Поля ввода даты времени
     // crm.input({[Тип], ["ID"], ["Заголовок"]});
-    crm.input({INPUT_DATE, "date1", "Date"});
-    crm.input({INPUT_TIME, "time1", "Time"});
+    //crm.input({INPUT_DATE, "date1", "Date"});
+    //crm.input({INPUT_TIME, "time1", "Time"});
     crm.input({INPUT_DATETIME, "datatime1", "Date & Time"});
 
     // Поле ввода текста и цифр, поддерживает паттерн, смотри в интернете.
     // crm.input({[Тип], ["ID"], ["Заголовок / значок"], ["Значение по умолчанию"], ["паттерн, смотри в инете"]});
-    crm.input({INPUT_TEXT, "input1", "Text (pattern)", "145", "[0-9]{1,8}"});
-    crm.input({INPUT_TEXT, "input2", "Output template", "Температура %T1"});
-    crm.input({INPUT_NUMBER, "num1", "Only number", "123"});
+    //crm.input({INPUT_TEXT, "input1", "Text (pattern)", "145", "[0-9]{1,8}"});
+    //crm.input({INPUT_TEXT, "input2", "Output template", "Температура %T1"});
+    //crm.input({INPUT_NUMBER, "num1", "Only number", "123"});
   }
+ 
+//Serial.println(crm.var("datatime1").toInt());
 
   // Поле ввода адреса электронной почты, цвета, переключателя (чекбокс).
   // crm.input({[Тип], ["ID"], ["Заголовок"], ["Значение по умолчанию"] });
@@ -266,13 +265,15 @@ void interface() {
   crm.input({INPUT_COLOR, "input3", "Color", "#FF22FF"});
   crm.input({INPUT_CHECKBOX, "chk1", "Button Reboot", "false"});
   
+crm.card({CARD_BUTTON, "SetTime", "Установить время", (setTime ? "Установить" : "Установлено"), "&#xe80b;", "#f2300a", true});
+  
   // Смотри выше ^
-  crm.output({OUTPUT_TEXT, "t11", "", txt, "#5f5"});
+  //crm.output({OUTPUT_TEXT, "t11", "", txt, "#5f5"});
 
   // Ползунок
   // crm.range({["ID"], ["Заголовок"], ["Значение по умолчанию"], ["MIN"], ["MAX"], [Шаг], ["Единицы измерения"]});
-  crm.range({"range1", "Volume", 12, 0, 84, 1});
-  crm.range({"range2", "Brightness", 52, 0, 84, 1, " lux"});
+  //crm.range({"range1", "Volume", 12, 0, 84, 1});
+  //crm.range({"range2", "Brightness", 52, 0, 84, 1, " lux"});
   if (crm.var("chk1") == "true") crm.input({INPUT_BUTTON, "reboot", "&#xe810;", "8px 9px 8px 14px", "row", "50"});
 
   crm.page("Wi-Fi");

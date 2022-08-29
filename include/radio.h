@@ -5,7 +5,7 @@
 
 #define _ID_SYS_  0x04  /*идентификатор системы*/
 //-----------------------------структура передаваемых данных
-
+#pragma pack (push,1)
 typedef struct
 {
 	unsigned char seconds;
@@ -18,8 +18,9 @@ typedef struct
 	//unsigned char control;
 	//  unsigned char data[];
 }ds1307_map_t;
+#pragma pack(pop)
 
-
+#pragma pack (push,1)
 typedef struct radio_frame_s
 {
 	
@@ -31,7 +32,9 @@ typedef struct radio_frame_s
  uint8_t msgid;//тип сообщени¤ 
  uint8_t data[];//данные максимум 50 байт если hc12
 }radio_frame;
+#pragma pack(pop)
 //------------------------------структура передаваемого сообщени¤ (msgid 1)
+#pragma pack (push,1)
 typedef struct radio_data1_s
 {
  uint8_t dt_format; // формат календар¤ 10 или 16 
@@ -41,9 +44,11 @@ typedef struct radio_data1_s
  float int_temp;//внутренн¤¤ температура град (bmp280)
  float press; //атмосферное давление мм рт ст (bmp280)
  uint8_t ds_error; //код ошибки ds18b20
- float ext_temp;//внешн¤¤ температура град (das18b20) 
+ float ext_temp;//внешняя температура град (das18b20) 
 }radio_data1;
+#pragma pack(pop)
 //--------------------------структура команды (msgid 5)
+#pragma pack (push,1)
 typedef struct radio_cmd_s
 {
   uint8_t target_id; // идентификатор получател¤ команды
@@ -51,13 +56,16 @@ typedef struct radio_cmd_s
   uint8_t len;       // число доп байт в команде
   uint8_t dat[17];   // данные
 }radio_cmd;
+#pragma pack(pop)
 //-----------------------ответ на команду (msgid 6)
+#pragma pack (push,1)
 typedef struct radio_cmd_resp_s
 {
   uint8_t cmd;       // команда
   uint8_t res;       // результат операции
   uint8_t dat[17];   // дополнительные данные
 }radio_cmd_resp;
+#pragma pack(pop)
 //-----------------прототипы функций
 //uint8_t finalize_message_chan(radio_frame* msg, uint8_t length);//готовит пакет к передаче (заполн¤ет заголовок, считает crc)
 uint8_t send_msg(radio_frame* msg, uint8_t length);//готовит и передает пакет в uart
