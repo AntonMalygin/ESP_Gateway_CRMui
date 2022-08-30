@@ -77,6 +77,18 @@ else
 }
 
 
+void Send_HC12Run() {
+// Подпрограмма для передачи данных в радиоканал на HC12.
+// Отправляем в HC12, то что пришло по UART от часов. 
+//Serial2.write(bf,msg->len+7);
+//Serial2.write((uint8_t *)rd.ext_temp);  
+
+//send_msgHC
+radio_poolHC(); // Получение данных от HC12 
+delayMicroseconds(200);
+}
+
+
 void update() {
   // Метод вызывается при каждом изменении значения элементов через веб интерфейса
   //Serial.println("Method update() run");

@@ -55,6 +55,14 @@ uint8_t send_msg(radio_frame* msg, uint8_t length)
   return Serial.write((uint8_t*)msg,len);
 }
 //------------------------------------
+//------------------------------------
+uint8_t send_msgHC(radio_frame* msg, uint8_t length)
+{
+  uint8_t len = finalize_message_chan(msg, length);
+  return Serial2.write((uint8_t*)msg,len);
+}
+//------------------------------------
+
 void radio_pool(void)
 {
   static uint8_t ukz;
@@ -108,7 +116,72 @@ void radio_pool(void)
 rx_radio_filter(mt);
               
             }
+              ukz=0;
+               return;
+           }
+
+        }    
+    
+    
+  }
+  
+}
+//---------------------------------
+// прием данных от Радиоканала с HC12
+void radio_poolHC(void)
+{
+  static uint8_t ukz;
+  static uint32_t tst;
+
+
+
+  if(ukz > 0)
+	{
+	if((millis() - tst) > 20)ukz = 0;
+	}
+ 
+  while(Serial2.available()>0)
+  {
+    rx_val[ukz] = Serial2.read();
+    tst = millis();
+
+        if((ukz == 0)&&(rx_val[0]== 0xA5)) //первый байт заголовка
+         {
+              ukz++;
+              continue;
+         }
+        //------------
+         if(ukz == 1)
+         {
+            if(rx_val[1]== 0x44)       //второй байт заголовка
+            {
+                ukz++;
+             }  else
+                  {
+                     ukz = 0;
+                  }
+            continue;
+          }
+        //--------------    
+        if (ukz<2){continue;}
+		
+		ukz++;
+        if(ukz >= 7)
+        {
+           if(rx_val[3] + 7 == ukz)
+           {
+            radio_frame *mt = (radio_frame *)rx_val;
+            uint8_t in_crc = mt->crc;
+            mt->crc = extra_tab[mt->msgid];
+            uint8_t crc = crc8(rx_val, ukz); 
+             ukz = 0;             
+            if(crc == in_crc) 
+            {
+
+rx_radio_filter(mt);
               
+            }
+              ukz=0;
                return;
            }
 

@@ -1,16 +1,14 @@
 #include <Arduino.h>
-#include "FS.h"
-#include <LITTLEFS.h>
-
 //Example use CRMui3  /  Пример использования CRMui3
-
 #include "CRMui3.h"
 #include <Ticker.h> // Входит в состав ядра
-#include "BluetoothSerial.h" 
+//#include "BluetoothSerial.h"
 
 // Объявление объектов
 CRMui3 crm;     // CRMui
 Ticker myLoop;  // Ticker
+Ticker Send_HC12;  // Задача отправки данных в HC12
+//BluetoothSerial SerialBT;
 
 // Переменные в примере
 bool st3, st4, st5, setTime;
@@ -23,19 +21,16 @@ bool st3, st4, st5, setTime;
 #include "radio.h"
       
 
-//radio_data1 rd; // Структура данных для MSG ID = 1 . Простые данные от часов
-radio_data1 rd;
+radio_data1 rd;          // Структура данных для MSG ID = 1 . Простые данные от часов
+radio_cmd rcmd;          // Структура данных для MSG ID = 5 . Cтруктура команды для часов
+radio_cmd_resp rcmd_r;   // Структура данных для MSG ID = 6 . Cтруктура ответа на команду от часов
+
+
 void rx_radio_filter(radio_frame * msg);
 
-#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
-#error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
-#endif
 
-#if !defined(CONFIG_BT_SPP_ENABLED)
-#error Serial Bluetooth not available or not enabled. It is only available for the ESP32 chip.
-#endif
 
-BluetoothSerial SerialBT; //Object for Bluetooth
+
 
 
 void setup() {
@@ -49,13 +44,12 @@ void setup() {
   //crm.begin("Project-28", interface, update);
   //crm.begin("Project-28", interface, NULL, NULL, 115200);
   crm.begin("ESP-Gateway", interface, update,NULL);
-  Serial.begin(115200);
-
+  Serial2.begin(BAUD_RATE2); //Выставляем скорость для общения с HC12 
+  Serial2.flush();
   Serial1.begin(BAUD_RATE); //Выставляем скорость для общения с часами 
   Serial1.setPins(RXD_PIN, TXD_PIN);
   Serial1.flush();
-  SerialBT.begin("ESP_GATEWAY"); //Bluetooth device name
-  //ESP_BT.begin("ESP_GATEWAY");
+ // SerialBT.begin("ESP_Gateway",false);
   // Авторизация в веб интерфейсе
   // Параметры со * обязательны.
   // crm.setWebAuth("[*Имя пользователя]", "[Пароль]");
@@ -78,6 +72,7 @@ void setup() {
   // NAME.attach_ms(ms, Fn); - Цикличное выполнение через указанный интервал
   // NAME.detach(); - Деактивировать
   myLoop.attach_ms(2000, myLoopRun);
+  Send_HC12.attach_ms(2000,Send_HC12Run);
 }
 
 
@@ -110,17 +105,33 @@ void rx_radio_filter(radio_frame * msg)
 {
 
 
-if (msg->msgid == 1)
+/* if (msg->msgid == 1)
 {
-  
-radio_data1 *rd1 =( radio_data1 *)msg->data;
 
- memcpy(&rd,rd1,sizeof(radio_data1));
+} */
 
+switch (msg->msgid)
+{
+case 1:{
+  radio_data1 *rd1 =( radio_data1 *)msg->data;
+  memcpy(&rd,rd1,sizeof(radio_data1));
+}break;
 
+case 5:{
+  radio_cmd *rcmd1 =( radio_cmd *)msg->data;
+  memcpy(&rcmd,rcmd1,sizeof(radio_cmd));
+}break;
+
+case 6:{
+  radio_cmd_resp *rcmd_r1 =( radio_cmd_resp *)msg->data;
+  memcpy(&rcmd_r,rcmd_r1,sizeof(radio_cmd_resp));
+}break;
+
+default:{
+ets_delay_us(10);
+  }break;
 }
-// Отправляем в HC12, то что пришло по UART от часов. 
-//Serial2.write(bf,msg->len+7);
-//Serial2.write((uint8_t *)msg,msg->len+7);
+
+
 }
 
