@@ -4,6 +4,7 @@
 
 extern radio_data1 rd;
 
+
 String lng() {
   // Вариант реализации многоязычности
   // Получить индекс языка
@@ -79,13 +80,25 @@ else
 
 void Send_HC12Run() {
 // Подпрограмма для передачи данных в радиоканал на HC12.
-// Отправляем в HC12, то что пришло по UART от часов. 
-//Serial2.write(bf,msg->len+7);
-//Serial2.write((uint8_t *)rd.ext_temp);  
+// Вызывается раз в 2сек
 
-//send_msgHC
-radio_poolHC(); // Получение данных от HC12 
-delayMicroseconds(200);
+radio_frame *rf_HC = (radio_frame *)radio_buf;
+radio_data1 *rd_HC = (radio_data1 *)rf->data;
+
+rf_HC->msgid=1;
+rd_HC->dt_format=rd.dt_format;
+rd_HC->dt_error=rd.dt_error;
+rd_HC->ds_error=rd.ds_error;
+rd_HC->ext_temp=rd.ext_temp;
+rd_HC->bm_error=rd.bm_error;
+rd_HC->int_temp=rd.int_temp;
+rd_HC->press=rd.press;
+
+
+send_msgHC(rf_HC, sizeof(radio_data1));
+
+
+
 }
 
 

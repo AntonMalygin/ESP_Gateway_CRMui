@@ -12,6 +12,7 @@ Ticker Send_HC12;  // Задача отправки данных в HC12
 
 // Переменные в примере
 bool st3, st4, st5, setTime;
+uint8_t radio_buf[64];//буфер передаваемых данных
 
 #define TXD_PIN (GPIO_NUM_26)
 #define RXD_PIN (GPIO_NUM_27)
@@ -81,6 +82,7 @@ void loop() {
   crm.run();
 
 radio_pool(); // Получение данных от часов
+radio_poolHC(); // Получение данных от HC12 
 
   // Проверка состояния нажатия совтовых кнопок. Проверка не обязательна.
   if (crm.btnSwStatus()) {
@@ -128,7 +130,7 @@ case 6:{
 }break;
 
 default:{
-ets_delay_us(10);
+ets_delay_us(1);
   }break;
 }
 
