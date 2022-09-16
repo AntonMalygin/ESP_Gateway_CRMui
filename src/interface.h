@@ -83,7 +83,7 @@ void Send_HC12Run() {
 // Вызывается раз в 2сек
 
 radio_frame *rf_HC = (radio_frame *)radio_buf;
-radio_data1 *rd_HC = (radio_data1 *)rf->data;
+radio_data1 *rd_HC = (radio_data1 *)rf_HC->data;
 
 rf_HC->msgid=1;
 rd_HC->dt_format=rd.dt_format;
