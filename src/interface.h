@@ -98,7 +98,7 @@ rd_HC->press=rd.press;
 send_msgHC(rf_HC, sizeof(radio_data1));
 
 
-
+ 
 }
 
 
@@ -123,6 +123,10 @@ void update() {
 
     b = a;
   }
+
+setTime = crm.var("SetTime") == "true" ? true:false;
+crm.webNotif(setTime ? "Green" : "Grey", setTime ? "Время Установить" : "Время Установлено", 5);
+
 }
 
 
@@ -173,7 +177,7 @@ void tablt2() {
 void Set_Time() {
   //Serial.println("Card 3 Button press.");
   setTime = !setTime;
-  crm.webUpdate("SetTime", setTime ? "Установить" : "Установлено");
+  crm.webUpdate("SetTime", setTime ? "Установлено" : "Установить");
 }
 
 void card_sw3() {
@@ -290,7 +294,7 @@ void interface() {
   crm.input({INPUT_COLOR, "input3", "Color", "#FF22FF"});
   crm.input({INPUT_CHECKBOX, "chk1", "Button Reboot", "false"});
   
-crm.card({CARD_BUTTON, "SetTime", "Установить время", (setTime ? "Установить" : "Установлено"), "&#xe80b;", "#f2300a", true});
+crm.card({CARD_BUTTON, "SetTime", "Установить время", (setTime ? "Установлено" : "Установить"), "&#xe80b;", "#f2300a", true});
   
   // Смотри выше ^
   //crm.output({OUTPUT_TEXT, "t11", "", txt, "#5f5"});
