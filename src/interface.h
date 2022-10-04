@@ -125,7 +125,7 @@ void update() {
   }
 
 setTime = crm.var("SetTime") == "true" ? true:false;
-crm.webNotif(setTime ? "Green" : "Grey", setTime ? "Время Установить" : "Время Установлено", 5);
+crm.webNotif(setTime ? "Red" : "Green", setTime ? "Время Установить" : "Время Установлено", 5);
 
 }
 
@@ -175,19 +175,20 @@ void tablt2() {
 }
 
 void Set_Time() {
-  //Serial.println("Card 3 Button press.");
+  Serial.println("SetTime Button press.");
   setTime = !setTime;
   crm.webUpdate("SetTime", setTime ? "Установлено" : "Установить");
+  Serial.println(crm.var("datatime1").toInt()6);
 }
 
 void card_sw3() {
-  //Serial.println("Card 3 Button press.");
+  Serial.println("Card 3 Button press.");
   st3 = !st3;
   crm.webUpdate("card3", st3 ? "Open" : "Close");
 }
 
 void card_sw4() {
-  //Serial.println("Card 4 Button press.");
+  Serial.println("Card 4 Button press.");
   st4 = !st4;
   crm.webUpdate("card4", st4 ? "Open" : "Close");
 }
