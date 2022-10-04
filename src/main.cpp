@@ -2,13 +2,13 @@
 //Example use CRMui3  /  Пример использования CRMui3
 #include "CRMui3.h"
 #include <Ticker.h> // Входит в состав ядра
-//#include "BluetoothSerial.h"
+/* #include "BluetoothSerial.h" */
 
 // Объявление объектов
 CRMui3 crm;     // CRMui
 Ticker myLoop;  // Ticker
 Ticker Send_HC12;  // Задача отправки данных в HC12
-//BluetoothSerial SerialBT;
+/* BluetoothSerial SerialBT; */
 
 // Переменные в примере
 bool st3, st4, st5, setTime;
@@ -44,13 +44,17 @@ void setup() {
   // crm.begin("[*Название проекта]", [*Ф-я интерфейса], [Ф-я обновления переменных], [Ф-я API], [Скорость серийного порта, доп. отладка]);
   //crm.begin("Project-28", interface, update);
   //crm.begin("Project-28", interface, NULL, NULL, 115200);
-  crm.begin("ESP-Gateway", interface, update,NULL);
+  crm.begin("ESP-Gateway", interface, update,NULL,115200);
   Serial2.begin(BAUD_RATE2); //Выставляем скорость для общения с HC12 
   Serial2.flush();
   Serial1.begin(BAUD_RATE); //Выставляем скорость для общения с часами 
   Serial1.setPins(RXD_PIN, TXD_PIN);
   Serial1.flush();
  // SerialBT.begin("ESP_Gateway",false);
+/* if (!SerialBT.begin("ESP32")) {
+    Serial.println("An error occurred initializing Bluetooth");
+  } */
+
   // Авторизация в веб интерфейсе
   // Параметры со * обязательны.
   // crm.setWebAuth("[*Имя пользователя]", "[Пароль]");
@@ -99,7 +103,9 @@ radio_poolHC(); // Получение данных от HC12
   // crm.btnCallback("[пин подключения кнопки]", [Функция для выполнения], [уровень при нажатии]);
   crm.btnCallback(4, hw_butt, LOW);      // Check pin33 HW button
 
- 
+ /*  while (SerialBT.available()) {
+    Serial.write(SerialBT.read());
+  } */
 
 }
 
