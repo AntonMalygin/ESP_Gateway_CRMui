@@ -67,7 +67,8 @@ else
   crm.webUpdate("month",String(rd.dt.month,HEX));
   crm.webUpdate("year",String(rd.dt.year,HEX));
   crm.webUpdate("date1307",String(String(rd.dt.day,HEX) + ":" + String(rd.dt.month,HEX) + ":" + String(rd.dt.year,HEX)));
-  crm.webUpdate("time1307",String(String(rd.dt.hours,HEX) + ":" + String(rd.dt.minutes,HEX) + ":" + String(rd.dt.seconds,HEX)));
+  //crm.webUpdate("time1307",String(String(rd.dt.hours,HEX) + ":" + String(rd.dt.minutes,HEX) + ":" + String(rd.dt.seconds,HEX)));
+  crm.webUpdate("time1307",String(rd.dt.hours,HEX));
   crm.webUpdate("time1307_sec",String(rd.dt.seconds,HEX));
   crm.webUpdate("timeformat",String(rd.dt_format));
   crm.webUpdate("dt_error",String(rd.dt_error,HEX));
@@ -178,7 +179,7 @@ void Set_Time() {
   Serial.println("SetTime Button press.");
   setTime = !setTime;
   crm.webUpdate("SetTime", setTime ? "Установлено" : "Установить");
-  Serial.println(crm.var("datatime1").toInt()6);
+  Serial.println(crm.var("datatime1").toInt());
 }
 
 void card_sw3() {
@@ -226,7 +227,7 @@ void interface() {
   crm.output({OUTPUT_TABL, "int_temp", "Температура внутри", "int_temp"});
   crm.output({OUTPUT_TABL, "ext_temp", "Температура снаружи", "ext_temp", "f0f"});
   crm.output({OUTPUT_TABL, "date1307", "День + Месяц + Год", "2020.07.04", "f0f"});
-  crm.output({OUTPUT_TABL, "time1307", "Час + минуты + секунды", "2020.07.04", "f0f"});
+  crm.output({OUTPUT_TABL, "time1307", "Час + минуты + секунды", "16.23.04", "f0f"});
     
 
   crm.output({OUTPUT_HR, "1px", "-3px 10% 0"});
