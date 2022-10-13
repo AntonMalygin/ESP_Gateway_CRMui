@@ -21,6 +21,23 @@ String lng() {
   }
 }
 
+String StrToDec(u_char x)
+{
+  String str;
+
+if (x>9)
+{
+  str=String(x,16);
+}
+else
+{
+  str="0" + String(x,16);
+}
+
+
+  return str;
+}
+
 void myLoopRun() {
   static int a[3] = {};
   static int i = 0;
@@ -66,9 +83,11 @@ else
   crm.webUpdate("date",String(rd.dt.date,HEX));
   crm.webUpdate("month",String(rd.dt.month,HEX));
   crm.webUpdate("year",String(rd.dt.year,HEX));
-  crm.webUpdate("date1307",String(String(rd.dt.day,HEX) + ":" + String(rd.dt.month,HEX) + ":" + String(rd.dt.year,HEX)));
-  //crm.webUpdate("time1307",String(String(rd.dt.hours,HEX) + ":" + String(rd.dt.minutes,HEX) + ":" + String(rd.dt.seconds,HEX)));
-  crm.webUpdate("time1307",String(rd.dt.hours,HEX));
+  crm.webUpdate("date1307",String(StrToDec(rd.dt.day) + ":" + StrToDec(rd.dt.month) + ":" + StrToDec(rd.dt.year)));
+ // crm.webUpdate("time1307",String(String(rd.dt.hours,HEX) + ":" + String(rd.dt.minutes,HEX) + ":" + String(rd.dt.seconds,HEX)));
+
+crm.webUpdate("time1307",String(StrToDec(rd.dt.hours) + ":" + StrToDec(rd.dt.minutes) + ":" + StrToDec(rd.dt.seconds)));
+  
   crm.webUpdate("time1307_sec",String(rd.dt.seconds,HEX));
   crm.webUpdate("timeformat",String(rd.dt_format));
   crm.webUpdate("dt_error",String(rd.dt_error,HEX));
@@ -77,6 +96,7 @@ else
 
 
 }
+
 
 
 void Send_HC12Run() {
@@ -180,6 +200,8 @@ void Set_Time() {
   setTime = !setTime;
   crm.webUpdate("SetTime", setTime ? "Установлено" : "Установить");
   Serial.println(crm.var("datatime1").toInt());
+  Serial.print("SetTime:");
+  Serial.println(setTime);
 }
 
 void card_sw3() {
@@ -225,9 +247,9 @@ void interface() {
   // crm.output({[Тип], ["ID"], ["Заголовок"], ["Значение при загрузке страницы"], ["цвет в HEX формате"]});
   crm.output({OUTPUT_TABL, "press", "Давление", "press", "0f0"});
   crm.output({OUTPUT_TABL, "int_temp", "Температура внутри", "int_temp"});
-  crm.output({OUTPUT_TABL, "ext_temp", "Температура снаружи", "ext_temp", "f0f"});
-  crm.output({OUTPUT_TABL, "date1307", "День + Месяц + Год", "2020.07.04", "f0f"});
-  crm.output({OUTPUT_TABL, "time1307", "Час + минуты + секунды", "16.23.04", "f0f"});
+  crm.output({OUTPUT_TABL, "ext_temp", "Температура снаружи", "ext_temp" });
+  crm.output({OUTPUT_TABL, "date1307", "День + Месяц + Год", "2020.07.04" });
+  crm.output({OUTPUT_TABL, "time1307", "Час + минуты + секунды", "16.23.04"});
     
 
   crm.output({OUTPUT_HR, "1px", "-3px 10% 0"});
