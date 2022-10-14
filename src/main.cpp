@@ -93,19 +93,11 @@ radio_poolHC(); // Получение данных от HC12
     // Проверка конкретных кнопок на нажатие
     // crm.btnCallback("[ID кнопки]", [Функция для выполнения]);
     crm.btnCallback("reboot", reboot);    // Check "reboot" SW button
-    crm.btnCallback("card3", card_sw3);   // Check "card3" SW button
-    crm.btnCallback("card4", card_sw4);   // Check "card4" SW button
-    crm.btnCallback("card5", card_sw5);   // Check "card5" SW button
-    crm.btnCallback("b3", tablt2);        // Check "b3" SW button
     crm.btnCallback("SetTime", Set_Time); // Проверка кнопки установки времени
   }
   // Проверка аппаратных кнопок на нажатие
   // crm.btnCallback("[пин подключения кнопки]", [Функция для выполнения], [уровень при нажатии]);
-  crm.btnCallback(4, hw_butt, LOW);      // Check pin33 HW button
-
- /*  while (SerialBT.available()) {
-    Serial.write(SerialBT.read());
-  } */
+    crm.btnCallback(4, hw_butt, LOW);      // Check pin33 HW button
 
 }
 

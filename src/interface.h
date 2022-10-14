@@ -190,36 +190,24 @@ void hw_butt() {
   //Serial.println("HW BUTTON PRESS!");
 }
 
-void tablt2() {
+//void tablt2() {
   //Serial.println("Button STOP press.");
-  crm.webUpdate("t2", String(millis()));
-}
+//  crm.webUpdate("t2", String(millis()));
+//}
 
 void Set_Time() {
+  int bbb;
+  char buf[17];
   Serial.println("SetTime Button press.");
-  setTime = !setTime;
+  setTime = true;
   crm.webUpdate("SetTime", setTime ? "Установлено" : "Установить");
-  Serial.println(crm.var("datatime1").toInt());
+  memset(buf,0,sizeof(buf));
+  strncpy(buf, crm.var("datatime1").c_str(), sizeof(buf) - 1);
+  
+  Serial.println(crm.var("datatime1"));
   Serial.print("SetTime:");
   Serial.println(setTime);
-}
-
-void card_sw3() {
-  Serial.println("Card 3 Button press.");
-  st3 = !st3;
-  crm.webUpdate("card3", st3 ? "Open" : "Close");
-}
-
-void card_sw4() {
-  Serial.println("Card 4 Button press.");
-  st4 = !st4;
-  crm.webUpdate("card4", st4 ? "Open" : "Close");
-}
-
-void card_sw5() {
-  //Serial.println("Card 5 Button press.");
-  st5 = !st5;
-  crm.webUpdate("card5", st5 ? "Open" : "Close");
+  Serial.println(buf);
 }
 
 
@@ -264,15 +252,14 @@ void interface() {
   // Переключатель
   // crm.card({[Тип], ["ID"], ["Заголовок"], ["Значение по умолчанию"], ["Значок"], ["цвет в HEX формате"], [Новая группа]});
   // Значок указывается из списка icon.pdf, в формате &#[CODE];  без 0
-  crm.card({CARD_CHECKBOX, "card1", "Motor", "false", "&#xf2c5;", "aaa"});
+  //crm.card({CARD_CHECKBOX, "card1", "Motor", "false", "&#xf2c5;", "aaa"});
   // График столбцы
   // crm.card({[Тип], ["ID"], ["Заголовок"], ["[Массив заголовков]"], ["[Данные]"], ["цвет в HEX формате"], [Новая группа]]});
   crm.card({CARD_CHART_B, "rssiraw", "WiFi RSSI RAW", "",  "", "#dddd00"});
   // Кнопка
   // crm.card({[Тип], ["ID"], ["Заголовок"], ["Значение по умолчанию"], ["Значок"], ["Цвет"], [Новая группа]});
-  crm.card({CARD_BUTTON, "card3", "Door 3", (st3 ? "Open" : "Close"), "&#xe802;", "0ab", true});
-  crm.card({CARD_BUTTON, "card4", "Door 4", (st4 ? "Open" : "Close"), "&#xe802;", "#a0b"});
-  crm.card({CARD_BUTTON, "card5", "Door 5", (st5 ? "Open" : "Close"), "&#xe805;", "#0ab"});
+  //crm.card({CARD_BUTTON, "card3", "Door 3", (st3 ? "Open" : "Close"), "&#xe802;", "0ab", true});
+
 
   // Для отображения значков в текстовых полях заключаем их в <z></z>
   // Пример <z>&#xf1c9;</z>
@@ -284,10 +271,8 @@ void interface() {
 
   // Кнопки
   // crm.input({[Тип], ["ID"], ["Заголовок / значок"], ["Внутренние отступы, смотри: padding html"], ["r - вряд"], ["Размер"]});
-  crm.input({INPUT_BUTTON, "b1", "&#xe816;", "10px 11px 10px 15px", "r", "55"});
-  crm.input({INPUT_BUTTON, "b2", "&#xe811;", "10px", "r", ""});
-  crm.input({INPUT_BUTTON, "b3", "&#xe812;", "10px 30px 10px 15px", "r", "45"});
-  crm.input({INPUT_BUTTON, "b4", "&#xe815;", "30px 11px 10px 15px", "r", "35"});
+  //crm.input({INPUT_BUTTON, "b1", "&#xe816;", "10px 11px 10px 15px", "r", "55"});
+
 
 
   crm.page("Settings");
@@ -314,11 +299,11 @@ void interface() {
 
   // Поле ввода адреса электронной почты, цвета, переключателя (чекбокс).
   // crm.input({[Тип], ["ID"], ["Заголовок"], ["Значение по умолчанию"] });
-  crm.input({INPUT_EMAIL, "email", "Your mail", "test@mail.ru"});
-  crm.input({INPUT_COLOR, "input3", "Color", "#FF22FF"});
+ // crm.input({INPUT_EMAIL, "email", "Your mail", "test@mail.ru"});
+ // crm.input({INPUT_COLOR, "input3", "Color", "#FF22FF"});
   crm.input({INPUT_CHECKBOX, "chk1", "Button Reboot", "false"});
   
-crm.card({CARD_BUTTON, "SetTime", "Установить время", (setTime ? "Установлено" : "Установить"), "&#xe80b;", "#f2300a", true});
+  crm.card({CARD_BUTTON, "SetTime", "Установить время", (setTime ? "Установлено" : "Установить"), "&#xe80b;", "#f2300a", true});
   
   // Смотри выше ^
   //crm.output({OUTPUT_TEXT, "t11", "", txt, "#5f5"});
