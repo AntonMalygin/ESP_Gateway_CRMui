@@ -208,6 +208,17 @@ void Set_Time() {
   Serial.print("SetTime:");
   Serial.println(setTime);
   Serial.println(buf);
+  Serial.print("buf[0]:");
+  Serial.println(buf[0]);
+  Serial.print("buf[1]:");
+  Serial.println(buf[1]);
+  Serial.print("buf[2]:");
+  Serial.println(buf[2]);
+  Serial.print("buf[3]:");
+  Serial.println(buf[3]);
+  Serial.print("buf[4]:");
+  Serial.println(buf[4]);
+  Serial.println("..");
 }
 
 
