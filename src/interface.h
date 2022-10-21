@@ -219,6 +219,9 @@ void Set_Time() {
   Serial.print("buf[4]:");
   Serial.println(buf[4]);
   Serial.println("..");
+  String baf_="102";
+  int hour_t = atoi(buf);
+  
 }
 
 
