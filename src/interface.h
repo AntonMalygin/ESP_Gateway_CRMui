@@ -3,7 +3,7 @@
 
 
 extern radio_data1 rd;
-
+extern ds1307_map_t time_tmp;
 
 String lng() {
   // Вариант реализации многоязычности
@@ -202,8 +202,8 @@ void Set_Time() {
   setTime = true;
   crm.webUpdate("SetTime", setTime ? "Установлено" : "Установить");
   memset(buf,0,sizeof(buf));
-  strncpy(buf, crm.var("datatime1").c_str(), sizeof(buf) - 1);
-  
+  //strncpy(buf, crm.var("datatime1").c_str(), sizeof(buf) - 1);
+  crm.var("datatime1").toCharArray(buf,sizeof(buf));
   Serial.println(crm.var("datatime1"));
   Serial.print("SetTime:");
   Serial.println(setTime);
@@ -219,9 +219,13 @@ void Set_Time() {
   Serial.print("buf[4]:");
   Serial.println(buf[4]);
   Serial.println("..");
-  String baf_="102";
+  
   int hour_t = atoi(buf);
   
+  Serial.println(hour_t);
+   Serial.println("..");
+  time_tmp.year=buf[1];
+  Serial.println(time_tmp.year);
 }
 
 
