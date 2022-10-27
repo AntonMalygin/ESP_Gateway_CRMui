@@ -2,7 +2,7 @@
 //Example use CRMui3  /  Пример использования CRMui3
 #include "CRMui3.h"
 #include <Ticker.h> // Входит в состав ядра
-/* #include "BluetoothSerial.h" */
+#include <GParser.h>
 
 // Объявление объектов
 CRMui3 crm;     // CRMui

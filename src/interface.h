@@ -1,9 +1,11 @@
 #include "main.h"
 #include "radio.h"
-
+#include <GParser.h>
 
 extern radio_data1 rd;
 extern ds1307_map_t time_tmp;
+
+
 
 String lng() {
   // Вариант реализации многоязычности
@@ -204,7 +206,7 @@ void Set_Time() {
   memset(buf,0,sizeof(buf));
   //strncpy(buf, crm.var("datatime1").c_str(), sizeof(buf) - 1);
   crm.var("datatime1").toCharArray(buf,sizeof(buf));
-  Serial.println(crm.var("datatime1"));
+/*   Serial.println(crm.var("datatime1"));
   Serial.print("SetTime:");
   Serial.println(setTime);
   Serial.println(buf);
@@ -225,8 +227,10 @@ void Set_Time() {
   Serial.println(hour_t);
    Serial.println("..");
   time_tmp.year=buf[1];
-  Serial.println(time_tmp.year);
-}
+  Serial.println(time_tmp.year);*/
+GPapser (buf,'T');
+
+} 
 
 
 void reboot() {
