@@ -1,10 +1,12 @@
 #include "main.h"
 #include "radio.h"
-#include <GParser.h>
+#include "mString.h"
 
 extern radio_data1 rd;
 extern ds1307_map_t time_tmp;
-
+extern radio_cmd_s rcmd;
+extern radio_cmd_resp rcmd_r;
+mString<17> buf4;
 
 
 String lng() {
@@ -150,6 +152,15 @@ void update() {
 setTime = crm.var("SetTime") == "true" ? true:false;
 crm.webNotif(setTime ? "Red" : "Green", setTime ? "Время Установить" : "Время Установлено", 5);
 
+ crm.var("datatime1").toCharArray(buf4.buf,sizeof(buf4));
+
+time_tmp.year    = buf4.toInt(2);
+time_tmp.month   = buf4.toInt(5);
+time_tmp.day     = buf4.toInt(8);
+time_tmp.hours   = buf4.toInt(11);
+time_tmp.minutes = buf4.toInt(14);
+
+
 }
 
 
@@ -198,37 +209,28 @@ void hw_butt() {
 //}
 
 void Set_Time() {
-  int bbb;
-  char buf[17];
+
   Serial.println("SetTime Button press.");
   setTime = true;
   crm.webUpdate("SetTime", setTime ? "Установлено" : "Установить");
-  memset(buf,0,sizeof(buf));
-  //strncpy(buf, crm.var("datatime1").c_str(), sizeof(buf) - 1);
-  crm.var("datatime1").toCharArray(buf,sizeof(buf));
-/*   Serial.println(crm.var("datatime1"));
-  Serial.print("SetTime:");
-  Serial.println(setTime);
-  Serial.println(buf);
-  Serial.print("buf[0]:");
-  Serial.println(buf[0]);
-  Serial.print("buf[1]:");
-  Serial.println(buf[1]);
-  Serial.print("buf[2]:");
-  Serial.println(buf[2]);
-  Serial.print("buf[3]:");
-  Serial.println(buf[3]);
-  Serial.print("buf[4]:");
-  Serial.println(buf[4]);
-  Serial.println("..");
-  
-  int hour_t = atoi(buf);
-  
-  Serial.println(hour_t);
-   Serial.println("..");
-  time_tmp.year=buf[1];
-  Serial.println(time_tmp.year);*/
-GPapser (buf,'T');
+
+rd = ();
+
+       radio_frame * rf = (radio_frame *)radio_buf;
+       radio_data1 * rd = (radio_data1 *)rf->data;
+
+rcmd.target_id=ID_SYS_Clock;
+rcmd.cmd=2;
+rcmd.dat[1]=time_tmp.minutes;
+rcmd.dat[2]=time_tmp.hours;
+rcmd.dat[4]=time_tmp.day;
+rcmd.dat[5]=time_tmp.month;
+rcmd.dat[6]=time_tmp.year;
+rcmd.len=sizeof(time_tmp);
+//send_msg(rcmd.target_id,rcmd.cmd,rcmd.len,rcmd.dat);
+send_msg(rf, sizeof(radio_data1));
+setTime=false;
+
 
 } 
 

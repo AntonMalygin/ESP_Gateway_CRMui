@@ -61,7 +61,7 @@ typedef struct radio_data1_s
 #pragma pack (push,1)
 typedef struct radio_cmd_s
 {
-  uint8_t target_id; // идентификатор получател¤ команды
+  uint8_t target_id; // идентификатор получателя команды
   uint8_t cmd;       // команда
   uint8_t len;       // число доп байт в команде
   uint8_t dat[17];   // данные
