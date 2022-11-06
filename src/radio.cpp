@@ -39,13 +39,17 @@ static uint8_t crc8(uint8_t *pcBlock, uint8_t len)
 //---------------------------------
 static uint8_t finalize_message_chan(radio_frame* msg, uint8_t length)
 {
-  msg->stx = _MSG_STX_;//вставляем заголовок 
+  msg->stx = lwip_htons(_MSG_STX_);//вставляем заголовок в перевернутом виде.
+
   msg->crc = extra_tab[msg->msgid]; //вставляем соль для расчета crc
   msg->len = length; //вставляем длину данных
   msg->seq = sh_seq++;//вставляем счетчик пакетов
   msg->sysid = _ID_SYS_; //вставляем идентификатор отправителя
-  msg->crc = crc8((uint8_t *)msg, sizeof(radio_frame) + length); //вставляем контрольную сумму
   
+  msg->crc = crc8((uint8_t *)msg, sizeof(radio_frame) + length); //вставляем контрольную сумму
+  Serial.print("msg->stx:");
+  Serial.println(msg->stx,HEX);
+  Serial.println(msg->crc,HEX);
   return sizeof(radio_frame) + length;
 }
 //------------------------------------

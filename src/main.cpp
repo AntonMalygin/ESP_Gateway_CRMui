@@ -107,14 +107,9 @@ radio_poolHC(); // Получение данных от HC12
 
 }
 
+//--------Обработка принятого пакета От часов и от HC-12 c радиоканала
 void rx_radio_filter(radio_frame * msg)
 {
-
-
-/* if (msg->msgid == 1)
-{
-
-} */
 
 switch (msg->msgid)
 {
@@ -123,18 +118,32 @@ case 1:{
   memcpy(&rd,rd1,sizeof(radio_data1));
 }break;
 
-case 5:{
+case 5:{                                       //выполнить команду
   radio_cmd *rcmd1 =( radio_cmd *)msg->data;
   memcpy(&rcmd,rcmd1,sizeof(radio_cmd));
     Serial.print("cmd:");
   Serial.println(rcmd1->cmd);
 }break;
 
-case 6:{
+case 6:{                                          
   radio_cmd_resp *rcmd_r1 =( radio_cmd_resp *)msg->data;
   memcpy(&rcmd_r,rcmd_r1,sizeof(radio_cmd_resp));
-  Serial.print("cmd_resp:");
-  Serial.println(rcmd_r1->res);
+
+ if (rcmd_r1->res==253)
+ {
+  Serial.println("Неверный формат Код ответа 253");  
+ }
+ 
+ if (rcmd_r1->res==254)
+ {
+  Serial.println("Неправильная длина команды Код ответа 254");
+ }
+ 
+ if (rcmd_r1->res==255)
+ {
+  Serial.println("команда не поддерживается Код ответа 255");
+ }
+  
 }break;
 
 default:{

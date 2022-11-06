@@ -106,6 +106,7 @@ crm.webUpdate("time1307",String(StrToDec(rd.dt.hours) + ":" + StrToDec(rd.dt.min
 void Send_HC12Run() {
 // Подпрограмма для передачи данных в радиоканал на HC12.
 // Вызывается раз в 2сек
+// Пока что сделано только передача информации от часов
 
 radio_frame *rf_HC = (radio_frame *)radio_buf;
 radio_data1 *rd_HC = (radio_data1 *)rf_HC->data;
@@ -113,11 +114,13 @@ radio_data1 *rd_HC = (radio_data1 *)rf_HC->data;
 rf_HC->msgid=1;
 rd_HC->dt_format=rd.dt_format;
 rd_HC->dt_error=rd.dt_error;
+rd_HC->dt=rd.dt;
 rd_HC->ds_error=rd.ds_error;
 rd_HC->ext_temp=rd.ext_temp;
 rd_HC->bm_error=rd.bm_error;
 rd_HC->int_temp=rd.int_temp;
 rd_HC->press=rd.press;
+
 
 
 send_msgHC(rf_HC, sizeof(radio_data1));
@@ -214,22 +217,24 @@ void Set_Time() {
   setTime = true;
   crm.webUpdate("SetTime", setTime ? "Установлено" : "Установить");
 
-//Сборка пакета на передачу
+//Сборка пакета на передачу для установки часов 
 
        radio_frame * rf = (radio_frame *)radio_buf;
        radio_cmd * rcmd = (radio_cmd *)rf->data;
 
-
-
 rcmd->target_id=ID_SYS_Clock;
-rcmd->cmd=2;
-rcmd->dat[1]=time_tmp.minutes;
-rcmd->dat[2]=time_tmp.hours;
+rcmd->cmd=2;                    // Команда установить часы
+rcmd->dat[0]=10;                // Десятичный формат чисел в часах
+rcmd->dat[1]=time_tmp.seconds;
+rcmd->dat[2]=time_tmp.minutes;
+rcmd->dat[3]=time_tmp.hours;
 rcmd->dat[4]=time_tmp.day;
-rcmd->dat[5]=time_tmp.month;
-rcmd->dat[6]=time_tmp.year;
-rcmd->len=sizeof(time_tmp);
-//send_msg(rcmd.target_id,rcmd.cmd,rcmd.len,rcmd.dat);
+rcmd->dat[5]=time_tmp.date;
+rcmd->dat[6]=time_tmp.month;
+rcmd->dat[7]=time_tmp.year;
+rcmd->len=sizeof(time_tmp)+1;
+rf->msgid = 0x05;               // Тип сообщения выполнить команду
+
 send_msg(rf, sizeof(radio_cmd));
 setTime=false;
 
