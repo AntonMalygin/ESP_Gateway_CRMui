@@ -5,7 +5,7 @@
 #include <string.h>
 
 
-#define _MSG_STX_ 0xa544 /*слово начала пакета*/
+#define _MSG_STX_ 0xA544 /*слово начала пакета*/
 const uint8_t extra_tab[] = {10,12,15,18,33,134,65,234,98,68,45,234,54,57,21,61,201,69,5,241,168,23,79,62,77};
 static uint8_t sh_seq;
 static uint8_t rx_val[64];
@@ -52,7 +52,8 @@ static uint8_t finalize_message_chan(radio_frame* msg, uint8_t length)
 uint8_t send_msg(radio_frame* msg, uint8_t length)
 {
   uint8_t len = finalize_message_chan(msg, length);
-  return Serial.write((uint8_t*)msg,len);
+  Serial.println("send_msg...");
+  return Serial1.write((uint8_t*)msg,len);
 }
 //------------------------------------
 //------------------------------------

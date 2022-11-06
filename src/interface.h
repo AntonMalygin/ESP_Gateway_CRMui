@@ -214,21 +214,23 @@ void Set_Time() {
   setTime = true;
   crm.webUpdate("SetTime", setTime ? "Установлено" : "Установить");
 
-rd = ();
+//Сборка пакета на передачу
 
        radio_frame * rf = (radio_frame *)radio_buf;
-       radio_data1 * rd = (radio_data1 *)rf->data;
+       radio_cmd * rcmd = (radio_cmd *)rf->data;
 
-rcmd.target_id=ID_SYS_Clock;
-rcmd.cmd=2;
-rcmd.dat[1]=time_tmp.minutes;
-rcmd.dat[2]=time_tmp.hours;
-rcmd.dat[4]=time_tmp.day;
-rcmd.dat[5]=time_tmp.month;
-rcmd.dat[6]=time_tmp.year;
-rcmd.len=sizeof(time_tmp);
+
+
+rcmd->target_id=ID_SYS_Clock;
+rcmd->cmd=2;
+rcmd->dat[1]=time_tmp.minutes;
+rcmd->dat[2]=time_tmp.hours;
+rcmd->dat[4]=time_tmp.day;
+rcmd->dat[5]=time_tmp.month;
+rcmd->dat[6]=time_tmp.year;
+rcmd->len=sizeof(time_tmp);
 //send_msg(rcmd.target_id,rcmd.cmd,rcmd.len,rcmd.dat);
-send_msg(rf, sizeof(radio_data1));
+send_msg(rf, sizeof(radio_cmd));
 setTime=false;
 
 

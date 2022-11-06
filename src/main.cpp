@@ -126,11 +126,15 @@ case 1:{
 case 5:{
   radio_cmd *rcmd1 =( radio_cmd *)msg->data;
   memcpy(&rcmd,rcmd1,sizeof(radio_cmd));
+    Serial.print("cmd:");
+  Serial.println(rcmd1->cmd);
 }break;
 
 case 6:{
   radio_cmd_resp *rcmd_r1 =( radio_cmd_resp *)msg->data;
   memcpy(&rcmd_r,rcmd_r1,sizeof(radio_cmd_resp));
+  Serial.print("cmd_resp:");
+  Serial.println(rcmd_r1->res);
 }break;
 
 default:{
