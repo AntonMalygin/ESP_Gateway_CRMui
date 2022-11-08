@@ -84,6 +84,7 @@ void setup() {
   // NAME.detach(); - Деактивировать
   myLoop.attach_ms(2000, myLoopRun);
   Send_HC12.attach_ms(2000,Send_HC12Run);
+  
 }
 
 

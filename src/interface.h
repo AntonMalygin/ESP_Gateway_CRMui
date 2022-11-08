@@ -121,11 +121,7 @@ rd_HC->bm_error=rd.bm_error;
 rd_HC->int_temp=rd.int_temp;
 rd_HC->press=rd.press;
 
-
-
 send_msgHC(rf_HC, sizeof(radio_data1));
-
-
  
 }
 
@@ -228,8 +224,8 @@ rcmd->dat[0]=10;                // Десятичный формат чисел 
 rcmd->dat[1]=time_tmp.seconds;
 rcmd->dat[2]=time_tmp.minutes;
 rcmd->dat[3]=time_tmp.hours;
-rcmd->dat[4]=time_tmp.day;
-rcmd->dat[5]=time_tmp.date;
+rcmd->dat[4]=time_tmp.date;
+rcmd->dat[5]=time_tmp.day;
 rcmd->dat[6]=time_tmp.month;
 rcmd->dat[7]=time_tmp.year;
 rcmd->len=sizeof(time_tmp)+1;
