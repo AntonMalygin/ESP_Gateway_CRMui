@@ -4,6 +4,9 @@
 #include <Ticker.h> // Входит в состав ядра
 #include "mString.h"
 
+#include "main.h"
+#include "radio.h"
+
 // Объявление объектов
 CRMui3 crm;     // CRMui
 Ticker myLoop;  // Ticker
@@ -12,6 +15,7 @@ Ticker Send_HC12;  // Задача отправки данных в HC12
 
 // Переменные в примере
 bool st3, st4, st5, setTime;
+
 uint8_t radio_buf[64];//буфер передаваемых данных
 
    // Присвоение констант для часов (команды и т.п.)
@@ -23,9 +27,7 @@ uint8_t radio_buf[64];//буфер передаваемых данных
 #define TXD_PIN (GPIO_NUM_26)
 #define RXD_PIN (GPIO_NUM_27)
 
-#include "interface.h"
-#include "main.h"
-#include "radio.h"
+
       
 
 radio_data1 rd;          // Структура данных для MSG ID = 1 . Простые данные от часов
@@ -38,7 +40,7 @@ void rx_radio_filter(radio_frame * msg);
 
 
 
-
+#include "interface.h"
 
 void setup() {
   pinMode(2, OUTPUT);

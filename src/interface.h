@@ -87,7 +87,7 @@ else
   crm.webUpdate("date",String(rd.dt.date,HEX));
   crm.webUpdate("month",String(rd.dt.month,HEX));
   crm.webUpdate("year",String(rd.dt.year,HEX));
-  crm.webUpdate("date1307",String(StrToDec(rd.dt.day) + ":" + StrToDec(rd.dt.month) + ":" + StrToDec(rd.dt.year)));
+  crm.webUpdate("date1307",String(StrToDec(rd.dt.date) + ":" + StrToDec(rd.dt.month) + ":" + StrToDec(rd.dt.year)));
  // crm.webUpdate("time1307",String(String(rd.dt.hours,HEX) + ":" + String(rd.dt.minutes,HEX) + ":" + String(rd.dt.seconds,HEX)));
 
 crm.webUpdate("time1307",String(StrToDec(rd.dt.hours) + ":" + StrToDec(rd.dt.minutes) + ":" + StrToDec(rd.dt.seconds)));
