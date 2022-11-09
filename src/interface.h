@@ -43,21 +43,22 @@ else
 }
 
 void myLoopRun() {
-  static int a[3] = {};
-  static int i = 0;
-  if (i > 2) i = 0;
-  a[i] = WiFi.RSSI();
+  //static int a[3] = {};
+  //static int i = 0;
+  //if (i > 2) i = 0;
+  //a[i] = WiFi.RSSI();
 
 
 
   // Обновление значений элементов веб интерфейса
   // crm.webUpdate("[ID элемента]", "[Значение]");
   // Интервал отправки 1 раз в сек.
-  crm.webUpdate("rssi", String((a[0] + a[1] + a[2]) / 3));
-  crm.webUpdate("rssiraw", String(a[i]));
-  i++;
- 
-  
+  //crm.webUpdate("rssi", String((a[0] + a[1] + a[2]) / 3));
+  //crm.webUpdate("rssiraw", String(a[i]));
+  //i++;
+  crm.webUpdate("G_0", String(rd.ext_temp,0));
+  crm.webUpdate("G_1", String(rd.int_temp,0));
+  crm.webUpdate("G_2", String(rd.press,0));
 
   if(rd.ds_error==0)
   {
@@ -65,7 +66,21 @@ void myLoopRun() {
   }
   else
    {
-    crm.webUpdate("ext_temp", String("Ошибка связи с датчиком Код: ")+ String(rd.ds_error));
+    String temp;
+switch (rd.ds_error)
+{
+case 1: temp =". Шина занята"; break;
+case 2: temp =". На шине никого нет"; break;
+case 3: temp =". Чтение ROM"; break;
+case 4: temp =". Режим датчика не 12бит"; break;
+case 5: temp =". Датчик не запрограммирован"; break;
+
+default: temp =". Другая ошибка";
+  break;
+}
+
+    //crm.webUpdate("ext_temp", String("Ошибка связи с датчиком Код: ")+ String(rd.ds_error));
+    crm.webUpdate("ext_temp", String("Ошибка связи с датчиком Код: "+ String(rd.ds_error,HEX) + temp));
     }
 
 if (rd.bm_error==0)
@@ -134,19 +149,19 @@ void update() {
   // Получить(Записать) значение переменной из(в) конфига
   // crm.var("ID")
   // crm.var("ID", "Значение")
-  bool a = crm.var("card1") == "true" ? true : false;
+  //bool a = crm.var("card1") == "true" ? true : false;
 
-  static bool b = false;
-  if (b != a) {
-    digitalWrite(2, a ? HIGH : LOW);
+  //static bool b = false;
+  //if (b != a) {
+  //  digitalWrite(2, a ? HIGH : LOW);
 
     // Отправить уведомление на страницу веб интерфейса
     // crm.webNotif("[Цвет]", "[Сообщение]", [время показа, с], [крестик закрыть (1, true)]);
     // Цвет: green, red, orange, blue, "" - без цвета
-    crm.webNotif(a ? "Red" : "Green", a ? "Motor start" : "Motor stop", 5);
+ //   crm.webNotif(a ? "Red" : "Green", a ? "Motor start" : "Motor stop", 5);
 
-    b = a;
-  }
+ //   b = a;
+ // }
 
 setTime = crm.var("SetTime") == "true" ? true:false;
 crm.webNotif(setTime ? "Red" : "Green", setTime ? "Время Установить" : "Время Установлено", 5);
@@ -272,35 +287,32 @@ void interface() {
   // Тип: GAUDE_1 - со стрелкой, GAUDE_2 - без стрелки
   // crm.gauge({[Тип], "[ID]", "[Заголовок]", [Min, шкала], [Max шкала], [Значение при загрузке], {[Цветовая палитра]}, ["Единицы измерения"], [Группировка]});
   
-crm.gauge({GAUDE_1, "ext_temp", "Температура Снаружи", -40, 60, rd.ext_temp,
+crm.gauge({GAUDE_1, "G_0", "Температура Снаружи", -40, 60, rd.ext_temp,
     {
-      {"#FF0000", "-20", "5"},   // Указываются конкретные значения
-      {"#FFFF00", "6", "12"},    // Цвет, начало заны, конец зоны, в формате HEX
-      {"#00FF00", "13", "24"},   // Количество не больше 6
-      {"#FFFF00", "25", "30"},   //
-      {"#FF0000", "31", "60"},   //
-      {"#FF0000", "62", "80"}    //
+      {"#1C14FF", "-40", "0"},   // Указываются конкретные значения
+      {"#19F3FF", "1", "10"},    // Цвет, начало заны, конец зоны, в формате HEX
+      {"#00FF00", "11", "25"},   // Количество не больше 6
+      {"#FF0800", "26", "60"}    //
     }, "°C",                     // Единицы измерения
     true                         // Группировать с предыдущим, def = false
   });
-  crm.gauge({GAUDE_1, "int_temp", "Температура Внутри", -40, 60, rd.int_temp,
+  crm.gauge({GAUDE_1, "G_1", "Температура Внутри", -40, 60, rd.int_temp,
     {
-      {"#FF0000", "-20", "5"},   // Указываются конкретные значения
-      {"#FFFF00", "6", "12"},    // Цвет, начало заны, конец зоны, в формате HEX
-      {"#00FF00", "13", "24"},   // Количество не больше 6
-      {"#FFFF00", "25", "30"},   //
-      {"#FF0000", "31", "60"},   //
-      {"#FF0000", "62", "80"}    //
+      {"#1C14FF", "-40", "0"},   // Указываются конкретные значения
+      {"#19F3FF", "1", "10"},    // Цвет, начало заны, конец зоны, в формате HEX
+      {"#00FF00", "11", "25"},   // Количество не больше 6
+      {"#FF0800", "26", "60"}    //
     }, "°C",                     // Единицы измерения
     true                         // Группировать с предыдущим, def = false
   });
-  crm.gauge({GAUDE_2, "press", "Давление", 700, 780, rd.press,
+  crm.gauge({GAUDE_1, "G_2", "Давление мм. рт. ст.", 740, 766, rd.press,
     {
-      {"#FF0000", "0.0"},        // 0.0 = 0%, 1.0 = 100%
-      {"#FF0000", "0.3"},        // Цвет, расположение на шкале, в формате HEX
-      {"#FFFF00", "0.7"},        // Количество не больше 6
-      {"#00FF00", "1.0"}         //
-    }, "мм.Рт.Ст",                      // Единицы измерения
+      {"#7FB2B2", "740", "744"},        // 0.0 = 0%, 1.0 = 100%
+      {"#AACC98", "745", "749"},        // Цвет, расположение на шкале, в формате HEX
+      {"#D5E57F", "750", "754"},        // Количество не больше 6
+      {"#FFFF66", "755", "760"},         //
+      {"#FFD166", "761", "766"}         //
+      }, "мм.рт.ст.",                      // Единицы измерения
     true                         // Группировать с предыдущим, def = false
   });
 
@@ -309,9 +321,9 @@ crm.gauge({GAUDE_1, "ext_temp", "Температура Снаружи", -40, 60
   // Тип: CHART_L - линии, CHART_B - бары (столбики)
   // Данные: [] - сохранять значения при навигации по разделам; "" - не сохранять
   //crm.chart({ [Тип], ["ID"], ["Заголовок"], ["[Массив заголовков]"], ["[Данные]"], ["цвет в HEX формате"], ["высота графика"] });
- crm.chart({CHART_L, "int_temp", "Температура внутри", "",  "", "#00dd00", "75"});
- crm.chart({CHART_L, "ext_temp", "Температура снаружи", "",  "", "#00dd00", "50"});
- crm.chart({CHART_L, "press", "Давление", "",  "", "#00dd00", "50"});
+ //crm.chart({CHART_L, "int_temp", "Температура внутри", "",  "", "#00dd00", "75"});
+// crm.chart({CHART_L, "ext_temp", "Температура снаружи", "",  "", "#00dd00", "50"});
+// crm.chart({CHART_L, "press", "Давление", "",  "", "#00dd00", "50"});
 
   // Плитки / Карточки
   // Переключатель
@@ -320,7 +332,7 @@ crm.gauge({GAUDE_1, "ext_temp", "Температура Снаружи", -40, 60
   //crm.card({CARD_CHECKBOX, "card1", "Motor", "false", "&#xf2c5;", "aaa"});
   // График столбцы
   // crm.card({[Тип], ["ID"], ["Заголовок"], ["[Массив заголовков]"], ["[Данные]"], ["цвет в HEX формате"], [Новая группа]]});
-  crm.card({CARD_CHART_L, "rssiraw", "WiFi RSSI RAW", "",  "", "#dddd00"});
+  //crm.card({CARD_CHART_L, "rssiraw", "WiFi RSSI RAW", "",  "", "#dddd00"});
   // Кнопка
   // crm.card({[Тип], ["ID"], ["Заголовок"], ["Значение по умолчанию"], ["Значок"], ["Цвет"], [Новая группа]});
   //crm.card({CARD_BUTTON, "card3", "Door 3", (st3 ? "Open" : "Close"), "&#xe802;", "0ab", true});
