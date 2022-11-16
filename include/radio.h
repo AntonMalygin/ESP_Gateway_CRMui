@@ -35,7 +35,7 @@ typedef struct radio_frame_s
 {
 	
  uint16_t stx;//стартовое слово 0xa544
- uint8_t crc; //контрольна¤ сумма всего сообщени¤ с солью в зависимости от msgid
+ uint8_t crc; //контрольна¤ сумма всего сообщения с солью в зависимости от msgid
  uint8_t len;//длина поля данных
  uint8_t seq;//счетчик пакетов
  uint8_t sysid;// ид отправителя
@@ -43,7 +43,7 @@ typedef struct radio_frame_s
  uint8_t data[];//данные максимум 50 байт если hc12
 }radio_frame;
 #pragma pack(pop)
-//------------------------------структура передаваемого сообщени¤ (msgid 1)
+//------------------------------структура передаваемого сообщения (msgid 1)
 #pragma pack (push,1)
 typedef struct radio_data1_s
 {
@@ -77,11 +77,12 @@ typedef struct radio_cmd_resp_s
 }radio_cmd_resp;
 #pragma pack(pop)
 //-----------------прототипы функций
-//uint8_t finalize_message_chan(radio_frame* msg, uint8_t length);//готовит пакет к передаче (заполняет заголовок, считает crc)
+uint8_t finalize_message_chan(radio_frame* msg, uint8_t length);//готовит пакет к передаче (заполняет заголовок, считает crc)
 uint8_t send_msg(radio_frame* msg, uint8_t length);//готовит и передает пакет в uart
 uint8_t send_msgHC(radio_frame* msg, uint8_t length);//готовит и передает пакет в uart HC12
 void radio_pool(void);//прием данных
 void radio_poolHC(void);//прием данных от HC12
 extern void rx_radio_filter(radio_frame * msg);
+static uint8_t crc8(uint8_t *pcBlock, uint8_t len);
 //-----------------
 #endif
