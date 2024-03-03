@@ -7,6 +7,7 @@ extern ds1307_map_t time_tmp;
 extern radio_cmd_s rcmd;
 extern radio_cmd_resp rcmd_r;
 mString<17> buf4;
+String Hostname="ESP7CDFA1C157BC"; //имя железки - выглядит как ESP7CDFA1C157BC т.е. ESP+mac адрес. //MAC/ 7C: DF: A1:C1:57:BC
 
 
 String lng() {
@@ -138,6 +139,35 @@ rd_HC->press=rd.press;
 
 send_msgHC(rf_HC, sizeof(radio_data1));
  
+}
+
+void SendToNarodmon() { // Собственно формирование пакета и отправка.
+  WiFiClient client;
+  String buf;
+    buf = "#" + Hostname + "\n"; //mac адрес для авторизации датчика
+    buf = buf + "#T1#" + String(rd.int_temp) + "\n"; //показания температуры в гараже
+    buf = buf + "#T2#" + String(rd.ext_temp) + "\n"; //показания температуры на улице
+    buf = buf + "#P1#" + String(rd.press) + "\n"; //показания давления
+    client.connect("narodmon.ru", 8283);   // подключение
+
+ 
+
+
+  //Данные от ESP ( Напряжение питания,уровень wifi
+  //buf = buf + "#VCC#" + String(ESP.getVcc() + 350) + "#Напряжение батареи\n"; //показания температуры
+  buf = buf + "#WIFI#"  + String(WiFi.RSSI()) + "#Уровень WI-FI " + String(WiFi.SSID()) + "\n"; // уровень WIFI сигнала
+ 
+
+
+
+
+  String worcktime = String(millis());
+  float WTime = worcktime.toInt(); WTime /= 1000;
+  buf = buf + "#WORKTIME#"  + String(WTime) + "#Время передачи данных" + "\n"; // уровень WIFI сигнала
+  buf = buf + "##\n"; //окончание передачи
+  client.print(buf); // и отправляем данные
+status_send_NarodMon=pdTRUE;//ушло
+  
 }
 
 
