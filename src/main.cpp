@@ -13,6 +13,7 @@ CRMui3 crm;     // CRMui
 Ticker myLoop;  // Ticker
 Ticker Send_HC12;  // Задача отправки данных в HC12
 Ticker Send_NarodMon; // Задача отправки данных на народный мониторинг
+Ticker Send_NarodMon; // Задача отправки данных на народный мониторинг
 /* BluetoothSerial SerialBT; */
 
 // Переменные в примере
