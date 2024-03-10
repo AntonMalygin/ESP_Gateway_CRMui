@@ -11,11 +11,13 @@
 CRMui3 crm;     // CRMui
 Ticker myLoop;  // Ticker
 Ticker Send_HC12;  // Задача отправки данных в HC12
+Ticker Send_NarodMon; // Задача отправки данных на народный мониторинг
 /* BluetoothSerial SerialBT; */
 
 // Переменные в примере
 bool st3, st4, st5, setTime;
 uint8_t radio_buf[64];//буфер передаваемых данных
+bool status_send_NarodMon= pdFALSE;     // Статус отправки данных на народный мониторинг
 
 // Присвоение констант для часов (команды и т.п.)
     byte SYNX_CLOCK = 2;
@@ -82,7 +84,7 @@ void setup() {
   // NAME.detach(); - Деактивировать
   myLoop.attach_ms(2000, myLoopRun);
   Send_HC12.attach_ms(2000,Send_HC12Run);
-  
+  Send_NarodMon.attach_ms(300000,SendToNarodmon);
 }
 
 
