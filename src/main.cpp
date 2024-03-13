@@ -2,7 +2,8 @@
 //Example use CRMui3  /  Пример использования CRMui3
 #include "CRMui3.h"
 #include <Ticker.h> // Входит в состав ядра
-#include "driver/uart.h"
+#include <GyverNTP.h>
+
 
 
 #include "main.h"
@@ -13,11 +14,13 @@ CRMui3 crm;     // CRMui
 Ticker myLoop;  // Ticker
 Ticker Send_HC12;  // Задача отправки данных в HC12
 Ticker Send_NarodMon; // Задача отправки данных на народный мониторинг
+Ticker NTP_synx;  // Задача синхронизации с сервером времени
+GyverNTP ntp(3,3600);
 
 /* BluetoothSerial SerialBT; */
 
 // Переменные в примере
-bool st3, st4, st5, setTime, setpins;
+bool st3, st4, st5, setTime, setpins,first_call_ntp;
 uint8_t radio_buf[64];//буфер передаваемых данных
 bool status_send_NarodMon= pdFALSE;     // Статус отправки данных на народный мониторинг
 
@@ -29,15 +32,15 @@ bool status_send_NarodMon= pdFALSE;     // Статус отправки дан�
     int SYNX_CLOCK_ERROR = 5; // Ошибка синхронизирования часов
     byte sh_seq=0;//вставляем счетчик пакетов
 
-char strftime_buf[64];
-strftime(char *strDest, size_t bufSize, const char *format, const struct tm *timeptr);
-
-      
+     
 
 radio_data1 rd;          // Структура данных для MSG ID = 1 . Простые данные от часов
 radio_cmd rcmd;          // Структура данных для MSG ID = 5 . Cтруктура команды для часов
 radio_cmd_resp rcmd_r;   // Структура данных для MSG ID = 6 . Cтруктура ответа на команду от часов
 ds1307_map_t time_tmp;  // Время полученное из вэб-интерфейса для передачи в часы.
+
+
+
 
 void rx_radio_filter(radio_frame * msg);
 
@@ -74,9 +77,10 @@ void setup() {
     Serial.println("An error occurred initializing Bluetooth");
   } */
 
- // Установка часового пояса
- setenv("TZ","MSK-3",1);
- tzset();
+  ntp.begin();              // запустить Обновление с ntp сервера
+  //ntp.asyncMode(false);   // выключить асинхронный режим
+  //ntp.ignorePing(true);   // не учитывать пинг до сервера
+
 
   // Авторизация в веб интерфейсе
   // Параметры со * обязательны.
@@ -104,18 +108,45 @@ void setup() {
   {
     Send_HC12.attach_ms(2000,Send_HC12Run);
   }
-  
-  
+    
   Send_NarodMon.attach_ms(300000,SendToNarodmon);
+  NTP_synx.attach(3600,NTP_server_synx); // Задача синхронизации с сервером времени и установкой часов
 }
 
 
 void loop() {
   // Обслуживание системных функций библиотеки
   crm.run();
-
+  ntp.tick();
 radio_pool(); // Получение данных от часов
-//radio_poolHC(); // Получение данных от HC12 
+if (!ntp.synced())
+{
+  delay(10000);
+  ntp.updateNow();
+  Serial.println(ntp.dateString());
+  Serial.println(ntp.timeString());
+  
+}
+
+if (ntp.synced()&&!first_call_ntp)
+{
+time_tmp.year    = ntp.year();
+time_tmp.month   = ntp.month();
+time_tmp.day     = ntp.day();
+time_tmp.hours   = ntp.hour();
+time_tmp.minutes = ntp.minute();
+Set_Time();
+first_call_ntp=pdTRUE;
+}
+
+
+
+if (crm.var("chk_HC12") == "true")
+{
+  radio_poolHC();
+}
+
+// // Получение данных от HC12 
 
   // Проверка состояния нажатия совтовых кнопок. Проверка не обязательна.
   if (crm.btnSwStatus()) {
@@ -124,9 +155,10 @@ radio_pool(); // Получение данных от часов
     crm.btnCallback("reboot", reboot);    // Check "reboot" SW button
     crm.btnCallback("SetTime", Set_Time); // Проверка кнопки установки времени
   }
+
   // Проверка аппаратных кнопок на нажатие
   // crm.btnCallback("[пин подключения кнопки]", [Функция для выполнения], [уровень при нажатии]);
- //   crm.btnCallback(4, hw_butt, LOW);      // Check pin33 HW button
+  //   crm.btnCallback(4, hw_butt, LOW);      // Check pin33 HW button
 
 
 

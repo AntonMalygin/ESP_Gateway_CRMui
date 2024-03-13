@@ -198,6 +198,8 @@ void SendToNarodmon() { // Собственно формирование пак�
 }
 
 
+
+
 void update() {
   // Метод вызывается при каждом изменении значения элементов через веб интерфейса
   //Serial.println("Method update() run");
@@ -309,6 +311,21 @@ setTime=false;
 
 } 
 
+void NTP_server_synx()   //Синхронизация с сервером времени и установка часов
+{
+  
+  ntp.updateNow();
+  delay(10000);
+if (ntp.synced())
+{
+time_tmp.year    = ntp.year();
+time_tmp.month   = ntp.month();
+time_tmp.day     = ntp.day();
+time_tmp.hours   = ntp.hour();
+time_tmp.minutes = ntp.minute();
+Set_Time();
+}
+}
 
 void reboot() {
   crm.webNotif("info", "Reboot ESP", 5, 1);
