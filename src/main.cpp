@@ -29,8 +29,8 @@ bool status_send_NarodMon= pdFALSE;     // Статус отправки дан�
     int SYNX_CLOCK_ERROR = 5; // Ошибка синхронизирования часов
     byte sh_seq=0;//вставляем счетчик пакетов
 
-
-
+char strftime_buf[64];
+strftime(char *strDest, size_t bufSize, const char *format, const struct tm *timeptr);
 
       
 
@@ -73,6 +73,10 @@ void setup() {
 /* if (!SerialBT.begin("ESP32")) {
     Serial.println("An error occurred initializing Bluetooth");
   } */
+
+ // Установка часового пояса
+ setenv("TZ","MSK-3",1);
+ tzset();
 
   // Авторизация в веб интерфейсе
   // Параметры со * обязательны.
