@@ -7,8 +7,8 @@ extern ds1307_map_t time_tmp;
 extern radio_cmd_s rcmd;
 extern radio_cmd_resp rcmd_r;
 mString<17> buf4;
-String Hostname="Clock30AEA49694B8"; //имя железки - выглядит как ESP7CDFA1C157BC т.е. ESP+mac адрес. //MAC адресс часов/ 30:ae:a4:96:94:b8
-
+//String Hostname="Clock30AEA49694B8"; //имя железки - выглядит как ESP7CDFA1C157BC т.е. ESP+mac адрес. //MAC адресс часов/ 30:ae:a4:96:94:b8
+String Hostname="Emul30AEA49694B8"; //имя железки - выглядит как ESP7CDFA1C157BC т.е. ESP+mac адрес. //MAC адресс часов/ 30:ae:a4:96:94:b8
 
 String lng() {
   // Вариант реализации многоязычности
