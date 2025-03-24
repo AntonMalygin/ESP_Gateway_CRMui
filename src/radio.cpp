@@ -37,7 +37,7 @@ static uint8_t crc8(uint8_t *pcBlock, uint8_t len)
     return crc;
 }
 //---------------------------------
-static uint8_t finalize_message_chan(radio_frame* msg, uint8_t length)
+uint8_t finalize_message_chan(radio_frame* msg, uint8_t length)
 {
   msg->stx = lwip_htons(_MSG_STX_);//вставляем заголовок в перевернутом виде.
 
