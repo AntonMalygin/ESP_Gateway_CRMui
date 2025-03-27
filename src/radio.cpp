@@ -47,9 +47,7 @@ uint8_t finalize_message_chan(radio_frame* msg, uint8_t length)
   msg->sysid = _ID_SYS_; //вставляем идентификатор отправителя
   
   msg->crc = crc8((uint8_t *)msg, sizeof(radio_frame) + length); //вставляем контрольную сумму
-  Serial.print("msg->stx:");
-  Serial.println(msg->stx,HEX);
-  Serial.println(msg->crc,HEX);
+
   return sizeof(radio_frame) + length;
 }
 //------------------------------------
@@ -78,15 +76,19 @@ void radio_pool(void)
   if(ukz > 0)
 	{
 	if((millis() - tst) > 20)ukz = 0;
+  
 	}
  
   while(Serial1.available()>0)
   {
+
     rx_val[ukz] = Serial1.read();
     tst = millis();
 
+
         if((ukz == 0)&&(rx_val[0]== 0xA5)) //первый байт заголовка
          {
+          
               ukz++;
               continue;
          }
@@ -94,7 +96,9 @@ void radio_pool(void)
          if(ukz == 1)
          {
             if(rx_val[1]== 0x44)       //второй байт заголовка
+            
             {
+              
                 ukz++;
              }  else
                   {
@@ -108,6 +112,7 @@ void radio_pool(void)
 		ukz++;
         if(ukz >= 7)
         {
+          
            if(rx_val[3] + 7 == ukz)
            {
             radio_frame *mt = (radio_frame *)rx_val;
@@ -119,7 +124,7 @@ void radio_pool(void)
             {
 
 rx_radio_filter(mt);
-              
+             
             }
               ukz=0;
                return;

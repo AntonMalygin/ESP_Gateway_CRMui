@@ -7,7 +7,8 @@ extern ds1307_map_t time_tmp;
 extern radio_cmd_s rcmd;
 extern radio_cmd_resp rcmd_r;
 mString<17> buf4;
-
+//String Hostname="Clock30AEA49694B8"; //имя железки - выглядит как ESP7CDFA1C157BC т.е. ESP+mac адрес. //MAC адресс часов/ 30:ae:a4:96:94:b8
+String Hostname="Emul30AEA49694B8"; //имя железки - выглядит как ESP7CDFA1C157BC т.е. ESP+mac адрес. //MAC адресс часов/ 30:ae:a4:96:94:b8
 
 String lng() {
   // Вариант реализации многоязычности
@@ -56,9 +57,18 @@ void myLoopRun() {
   //crm.webUpdate("rssi", String((a[0] + a[1] + a[2]) / 3));
   //crm.webUpdate("rssiraw", String(a[i]));
   //i++;
-  crm.webUpdate("G_0", String(rd.ext_temp,0));
-  crm.webUpdate("G_1", String(rd.int_temp,0));
-  crm.webUpdate("G_2", String(rd.press,0));
+  if (rd.ds_error==0)
+  {
+   crm.webUpdate("G_0", String(rd.ext_temp,0)); 
+  }
+  if (rd.bm_error==0)
+  {
+    crm.webUpdate("G_1", String(rd.int_temp,0));
+    crm.webUpdate("G_2", String(rd.press,0));
+  }
+  
+  
+ 
 
   if(rd.ds_error==0)
   {
@@ -140,6 +150,53 @@ send_msgHC(rf_HC, sizeof(radio_data1));
  
 }
 
+void SendToNarodmon() { // Собственно формирование пакета и отправка.
+  WiFiClient client;
+  String buf;
+    buf = "#" + Hostname + "\n"; //mac адрес для авторизации датчика
+    if (rd.bm_error==0)
+    {
+      buf = buf + "#T1#" + String(rd.int_temp) + "\n"; //показания температуры в гараже
+    } else
+    {      buf = buf + "#T1#" + String(0.0) + "\n"; //показания температуры в гараже
+    }
+    if (rd.ds_error==0)
+    {
+      buf = buf + "#T2#" + String(rd.ext_temp) + "\n"; //показания температуры на улице
+    }else
+    {
+      buf = buf + "#T2#" + String(0.0) + "\n"; //показания температуры на улице
+    }
+    
+    if (rd.bm_error==0)
+    {
+      buf = buf + "#P1#" + String(rd.press) + "\n"; //показания давления
+    } else
+    {      buf = buf + "#P1#" + String(0.0) + "\n"; //показания давления
+    }
+    
+    client.connect("narodmon.ru", 8283);   // подключение
+
+ 
+
+
+  //Данные от ESP ( Напряжение питания,уровень wifi
+  //buf = buf + "#VCC#" + String(ESP.getVcc() + 350) + "#Напряжение батареи\n"; //показания температуры
+  buf = buf + "#WIFI#"  + String(WiFi.RSSI()) + "#Уровень WI-FI " + String(WiFi.SSID()) + "\n"; // уровень WIFI сигнала
+ 
+
+
+
+
+  String worcktime = String(millis());
+  float WTime = worcktime.toInt(); WTime /= 1000;
+  buf = buf + "#WORKTIME#"  + String(WTime) + "#Время передачи данных" + "\n"; // уровень WIFI сигнала
+  buf = buf + "##\n"; //окончание передачи
+  client.print(buf); // и отправляем данные
+  status_send_NarodMon=pdTRUE;//ушло
+  
+}
+
 
 void update() {
   // Метод вызывается при каждом изменении значения элементов через веб интерфейса
@@ -178,7 +235,7 @@ time_tmp.minutes = buf4.toInt(14);
 }
 
 
-void api(String p) {
+/* void api(String p) {
   // Метод вызывается при API запросах
   // Обязательно с параметром, тип String
   //
@@ -209,7 +266,7 @@ void api(String p) {
   if (prt != NULL) {
     //Serial.println(prt);
   }
-}
+} */
 
 
 //функции кнопок
@@ -267,7 +324,7 @@ void reboot() {
 // Метод, вызывается при открытии веб интерфейса.
 void interface() {
   // Заголовок новой страницы
-  crm.page("Гараж");
+  crm.page("&#xe802;Гараж");
 
   //Разделитель
   //crm.output({[Тип], ["Размер в px"], ["Отступы, смотри свойство: margin html"]});
@@ -282,11 +339,13 @@ void interface() {
   crm.output({OUTPUT_TABL, "time1307", "Час + минуты + секунды", "16.23.04"});
   crm.output({OUTPUT_HR, "1px", "-3px 10% 0"});
 
-
+Serial.print("rd.ds_error=");
+Serial.println(rd.ds_error);
 // Дуговые индикаторы
   // Тип: GAUDE_1 - со стрелкой, GAUDE_2 - без стрелки
   // crm.gauge({[Тип], "[ID]", "[Заголовок]", [Min, шкала], [Max шкала], [Значение при загрузке], {[Цветовая палитра]}, ["Единицы измерения"], [Группировка]});
-  
+  if (rd.ds_error==0){
+    
 crm.gauge({GAUDE_1, "G_0", "Температура Снаружи", -40, 60, rd.ext_temp,
     {
       {"#1C14FF", "-40", "0"},   // Указываются конкретные значения
@@ -295,7 +354,20 @@ crm.gauge({GAUDE_1, "G_0", "Температура Снаружи", -40, 60, rd.
       {"#FF0800", "26", "60"}    //
     }, "°C",                     // Единицы измерения
     true                         // Группировать с предыдущим, def = false
+  });}
+    else {
+
+crm.gauge({GAUDE_1, "G_0", "&#xe80c; Температура Снаружи", -40, 60, 0,
+    {
+      {"#1C14FF", "-40", "0"},   // Указываются конкретные значения
+      {"#19F3FF", "1", "10"},    // Цвет, начало заны, конец зоны, в формате HEX
+      {"#00FF00", "11", "25"},   // Количество не больше 6
+      {"#FF0800", "26", "60"}    //
+    }, "°C",                     // Единицы измерения
+    pdFALSE                         // Группировать с предыдущим, def = false
   });
+
+    }
   crm.gauge({GAUDE_1, "G_1", "Температура Внутри", -40, 60, rd.int_temp,
     {
       {"#1C14FF", "-40", "0"},   // Указываются конкретные значения
@@ -352,10 +424,15 @@ crm.gauge({GAUDE_1, "G_0", "Температура Снаружи", -40, 60, rd.
 
 
 
-  crm.page("Settings");
+  crm.page("&#xe83a; Settings");
   // Поле выбора (селект)
   // crm.select({["ID"], ["Заголовок / значок"], ["Значение по умолчанию"], ["Значения {{A:1},{B:2},{N:n}}] });
-  crm.select({"select1", "Elements", "0", {{"Hide", "0"}, {"Show", "1"}}});
+ //  crm.select({"select1", "Elements", "0", "Значения {{Hide:0}, {Show:1}}});
+
+  crm.selOpt({"Скрыть", "0"});
+  crm.selOpt({"Показать", "1"});
+  crm.select({"select1", "Доп. опции", "1", "1"});
+
   // Получить значение из конфига
   // crm.var(["ID переменной"])
   if (crm.var("select1").toInt() > 0) {
@@ -363,14 +440,16 @@ crm.gauge({GAUDE_1, "G_0", "Температура Снаружи", -40, 60, rd.
     // crm.input({[Тип], ["ID"], ["Заголовок"]});
     //crm.input({INPUT_DATE, "date1", "Date"});
     //crm.input({INPUT_TIME, "time1", "Time"});
-    crm.input({INPUT_DATETIME, "datatime1", "Date & Time"});
+    crm.input({INPUT_DATETIME, "datatime1", "Установка времени"});
 
     // Поле ввода текста и цифр, поддерживает паттерн, смотри в интернете.
     // crm.input({[Тип], ["ID"], ["Заголовок / значок"], ["Значение по умолчанию"], ["паттерн, смотри в инете"]});
     //crm.input({INPUT_TEXT, "input1", "Text (pattern)", "145", "[0-9]{1,8}"});
     //crm.input({INPUT_TEXT, "input2", "Output template", "Температура %T1"});
     //crm.input({INPUT_NUMBER, "num1", "Only number", "123"});
+    crm.input({INPUT_CHECKBOX, "chk_HC12", "Включить радио канал", "false"});
   }
+
  
 //Serial.println(crm.var("datatime1").toInt());
 
@@ -391,7 +470,7 @@ crm.gauge({GAUDE_1, "G_0", "Температура Снаружи", -40, 60, rd.
   //crm.range({"range2", "Brightness", 52, 0, 84, 1, " lux"});
   if (crm.var("chk1") == "true") crm.input({INPUT_BUTTON, "reboot", "&#xe810;", "8px 9px 8px 14px", "row", "50"});
 
-  crm.page("Wi-Fi");
+  crm.page("&#xf1eb; Wi-Fi");
   // форма с полями для WiFi
   crm.wifiForm(WIFI_AP, "ESP-Gateway");
   crm.input({INPUT_BUTTON, "reboot", "REBOOT"});
