@@ -177,25 +177,21 @@ void SendToNarodmon() { // Собственно формирование пак�
     
     client.connect("narodmon.ru", 8283);   // подключение
 
- 
-
 
   //Данные от ESP ( Напряжение питания,уровень wifi
   //buf = buf + "#VCC#" + String(ESP.getVcc() + 350) + "#Напряжение батареи\n"; //показания температуры
   buf = buf + "#WIFI#"  + String(WiFi.RSSI()) + "#Уровень WI-FI " + String(WiFi.SSID()) + "\n"; // уровень WIFI сигнала
  
-
-
-
-
-  String worcktime = String(millis());
-  float WTime = worcktime.toInt(); WTime /= 1000;
-  buf = buf + "#WORKTIME#"  + String(WTime) + "#Время передачи данных" + "\n"; // уровень WIFI сигнала
+  String worktime = String(millis());
+  float WTime = worktime.toInt(); WTime /= 1000;
+  buf = buf + "#WORKTIME#"  + String(crm.upTime()) + "#Время передачи данных" + "\n"; // Время непрерывной работы часов
+  //buf = buf + "#WORKTIME#"  + String(WTime) + "#Время передачи данных" + "\n"; // Время непрерывной работы часов
   buf = buf + "##\n"; //окончание передачи
   client.print(buf); // и отправляем данные
   status_send_NarodMon=pdTRUE;//ушло
   
 }
+
 
 
 void update() {
@@ -317,7 +313,32 @@ void reboot() {
   crm.espReboot();
 }
 
+void reboot_Wifi_Megafon(){ //Перезагрузка свистка Мегафон
+//Пока тут чисто заглушка
+ets_delay_us(1);
+//crm.espReboot();
+}
 
+void SearchWifi(){ // Проверяем подключены ли к Wifi Store5. Либо перезагружаемся 5раз
+if (WiFi.getMode()==3&&count_rebootESP<3)
+{
+ count_rebootESP++;
+ crm.espReboot();
+
+}
+
+if (WiFi.getMode()==3&&count_rebootESP==3)
+{
+  reboot_Wifi_Megafon();    // Отправить свисток Мегафон на перезагрузку
+}
+
+
+if (WiFi.getMode()==1)
+{
+  count_rebootESP=0;
+}
+
+}
 
 
 

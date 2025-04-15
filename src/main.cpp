@@ -13,6 +13,7 @@ CRMui3 crm;     // CRMui
 Ticker myLoop;  // Ticker
 Ticker Send_HC12;  // Задача отправки данных в HC12
 Ticker Send_NarodMon; // Задача отправки данных на народный мониторинг
+Ticker Search_Wifi; // Задача проверки доступной точки доступа Store5 и попытка подключения к ней.
 
 /* BluetoothSerial SerialBT; */
 
@@ -20,8 +21,8 @@ Ticker Send_NarodMon; // Задача отправки данных на нар�
 bool st3, st4, st5, setTime, setpins;
 uint8_t radio_buf[64];//буфер передаваемых данных
 bool status_send_NarodMon= pdFALSE;     // Статус отправки данных на народный мониторинг
-
-
+bool status_Search_Wifi=pdFALSE;        // Статус поиска сети не производился
+u_short count_rebootESP=0;                 // Счетчик перезагрузок ESP
 
 // Присвоение констант для часов (команды и т.п.)
     byte SYNX_CLOCK = 2;
@@ -103,6 +104,7 @@ void setup() {
   
   
   Send_NarodMon.attach_ms(300000,SendToNarodmon);
+  Search_Wifi.attach(120,SearchWifi);
 }
 
 
