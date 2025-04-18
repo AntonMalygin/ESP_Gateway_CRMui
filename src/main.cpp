@@ -11,7 +11,7 @@
 // Объявление объектов
 CRMui3 crm;     // CRMui
 Ticker myLoop;  // Ticker
-Ticker Send_HC12;  // Задача отправки данных в HC12
+//Ticker Send_HC12;  // Задача отправки данных в HC12
 Ticker Send_NarodMon; // Задача отправки данных на народный мониторинг
 Ticker Search_Wifi; // Задача проверки доступной точки доступа Store5 и попытка подключения к ней.
 
@@ -61,15 +61,10 @@ void setup() {
     Serial.flush();
     Serial.println();
 
-
-
-  Serial2.begin(BAUD_RATE2); //Выставляем скорость для общения с HC12 
-  Serial2.flush();
-
-  setpins=Serial1.setPins(RXD_PIN, TXD_PIN,-1,-1);
+  Serial1.setPins(RXD_PIN, TXD_PIN,-1,-1);
   Serial1.begin(BAUD_RATE); //Выставляем скорость для общения с часами 
-
   Serial1.flush();
+
  // SerialBT.begin("ESP_Gateway",false);
 /* if (!SerialBT.begin("ESP32")) {
     Serial.println("An error occurred initializing Bluetooth");
@@ -97,14 +92,9 @@ void setup() {
   // NAME.attach_ms(ms, Fn); - Цикличное выполнение через указанный интервал
   // NAME.detach(); - Деактивировать
   myLoop.attach_ms(2000, myLoopRun);
-  if (crm.var("chk_HC12") == "true")
-  {
-    Send_HC12.attach_ms(2000,Send_HC12Run);
-  }
-  
-  
+    
   Send_NarodMon.attach_ms(300000,SendToNarodmon);
-  Search_Wifi.attach(120,SearchWifi);
+  Search_Wifi.attach(120,SearchWifi); // Цикличное выполнение в секундах
 }
 
 

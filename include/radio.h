@@ -79,9 +79,7 @@ typedef struct radio_cmd_resp_s
 //-----------------прототипы функций
 uint8_t finalize_message_chan(radio_frame* msg, uint8_t length);//готовит пакет к передаче (заполняет заголовок, считает crc)
 uint8_t send_msg(radio_frame* msg, uint8_t length);//готовит и передает пакет в uart
-uint8_t send_msgHC(radio_frame* msg, uint8_t length);//готовит и передает пакет в uart HC12
 void radio_pool(void);//прием данных
-void radio_poolHC(void);//прием данных от HC12
 extern void rx_radio_filter(radio_frame * msg);
 static uint8_t crc8(uint8_t *pcBlock, uint8_t len);
 //-----------------

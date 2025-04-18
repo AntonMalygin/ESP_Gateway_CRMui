@@ -8,7 +8,8 @@ extern radio_cmd_s rcmd;
 extern radio_cmd_resp rcmd_r;
 mString<17> buf4;
 //String Hostname="Clock30AEA49694B8"; //имя железки - выглядит как ESP7CDFA1C157BC т.е. ESP+mac адрес. //MAC адресс часов/ 30:ae:a4:96:94:b8
-String Hostname="Emul30AEA49694B8"; //имя железки - выглядит как ESP7CDFA1C157BC т.е. ESP+mac адрес. //MAC адресс часов/ 30:ae:a4:96:94:b8
+//String Hostname="Emul30AEA49694B8"; //имя железки - выглядит как ESP7CDFA1C157BC т.е. ESP+mac адрес. //MAC адресс часов/ 30:ae:a4:96:94:b8
+String Hostname="Emul7cdfa1c157bc"; //имя железки - выглядит как ESP7CDFA1C157BC т.е. ESP+mac адрес. //MAC адресс ESP32-C3 / 7C:DF:A1:C1:57:BC
 
 String lng() {
   // Вариант реализации многоязычности
@@ -126,29 +127,6 @@ crm.webUpdate("time1307",String(StrToDec(rd.dt.hours) + ":" + StrToDec(rd.dt.min
 
 }
 
-
-
-void Send_HC12Run() {
-// Подпрограмма для передачи данных в радиоканал на HC12.
-// Вызывается раз в 2сек
-// Пока что сделано только передача информации от часов
-
-radio_frame *rf_HC = (radio_frame *)radio_buf;
-radio_data1 *rd_HC = (radio_data1 *)rf_HC->data;
-
-rf_HC->msgid=1;
-rd_HC->dt_format=rd.dt_format;
-rd_HC->dt_error=rd.dt_error;
-rd_HC->dt=rd.dt;
-rd_HC->ds_error=rd.ds_error;
-rd_HC->ext_temp=rd.ext_temp;
-rd_HC->bm_error=rd.bm_error;
-rd_HC->int_temp=rd.int_temp;
-rd_HC->press=rd.press;
-
-send_msgHC(rf_HC, sizeof(radio_data1));
- 
-}
 
 void SendToNarodmon() { // Собственно формирование пакета и отправка.
   WiFiClient client;
@@ -468,7 +446,7 @@ crm.gauge({GAUDE_1, "G_0", "&#xe80c; Температура Снаружи", -40
     //crm.input({INPUT_TEXT, "input1", "Text (pattern)", "145", "[0-9]{1,8}"});
     //crm.input({INPUT_TEXT, "input2", "Output template", "Температура %T1"});
     //crm.input({INPUT_NUMBER, "num1", "Only number", "123"});
-    crm.input({INPUT_CHECKBOX, "chk_HC12", "Включить радио канал", "false"});
+   
   }
 
  
